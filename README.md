@@ -1,0 +1,1 @@
+# Loja-modelo-de-slide-HndsX
