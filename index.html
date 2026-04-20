@@ -18,6 +18,9 @@ header h1 { color:#ff3b3b; }
 .filtro .ativo { background:#ff3b3b; }
 .carrinho { background:#111; padding:20px; margin:20px; border-radius:15px; }
 .remover { color:red; cursor:pointer; margin-left:10px; }
+.slider { position: relative; overflow: hidden; }
+.slider img { width: 100%; display: none; border-radius: 10px; }
+.slider img.ativo { display: block; }
 </style></head><body><div class="topbar">Compre direto pelo WhatsApp ⚡</div><header>
 <h1>HnSlides</h1>
 </header><section class="hero">
@@ -29,17 +32,23 @@ header h1 { color:#ff3b3b; }
 <span onclick="filtrar('canva', event)">Canva</span>
 <span onclick="filtrar('ppt', event)">PPT</span>
 </div><div class="grid" id="grid"><div class="card" data-cat="criativo">
-<img src="imagens/slide1.png">
+<div class="slider">
+  <img src="imagens/slide1.png" class="ativo">
+  <img src="imagens/slide1-2.png">
+  <img src="imagens/slide1-3.png">
+</div>
+<button class="botao" onclick="mudarSlide(this, -1)">⬅</button>
+<button class="botao" onclick="mudarSlide(this, 1)">➡</button>
 <h3>Slide Bob Esponja</h3>
 <p class="preco">R$ 9,90</p>
 <button class="botao" onclick="add('Slide Bob Esponja',9.9)">Adicionar</button>
 </div><div class="card" data-cat="canva">
-<img src="imagens/ShrekSlide.png">
-<h3>Slide Shrek</h3>
+<img src="sua-imagem-aqui.jpg">
+<h3>Slide Coraline</h3>
 <p class="preco">R$ 9,90</p>
 <button class="botao" onclick="add('Slide Coraline',9.9)">Adicionar</button>
 </div><div class="card" data-cat="ppt">
-<img src="imagens/slide2.png">
+<img src="sua-imagem-aqui.jpg">
 <h3>Slide Jornal</h3>
 <p class="preco">R$ 8,00</p>
 <button class="botao" onclick="add('Slide Jornal',8)">Adicionar</button>
@@ -68,7 +77,7 @@ function atualizar(){
 
  carrinho.forEach((item,i)=>{
   let li=document.createElement('li');
- li.innerHTML = item.nome+' - R$ '+item.preco.toFixed(2)+` <button class='remover' onclick='remover(${i})'>Remover</button>`;;
+  li.innerHTML = item.nome+' - R$ '+item.preco.toFixed(2)+` <span class='remover' onclick='remover(${i})'>X</span>`;
   lista.appendChild(li);
   total+=item.preco;
  });
@@ -98,9 +107,27 @@ function finalizarWhatsApp(){
 
  msg += '%0A💰 Total: R$ ' + total.toFixed(2);
 
- let numero = '9974000555'; 
+ let numero = '5599999999999'; // TROQUE PELO SEU NÚMERO
 
  window.open('https://wa.me/' + numero + '?text=' + msg, '_blank');
+}
+function mudarSlide(btn, direcao){
+  let card = btn.parentElement;
+  let slider = card.querySelector('.slider');
+  let imgs = slider.querySelectorAll('img');
+  
+  let atual = 0;
+  imgs.forEach((img,i)=>{
+    if(img.classList.contains('ativo')) atual = i;
+    img.classList.remove('ativo');
+  });
+
+  let novo = atual + direcao;
+
+  if(novo < 0) novo = imgs.length - 1;
+  if(novo >= imgs.length) novo = 0;
+
+  imgs[novo].classList.add('ativo');
 }
 </script></body>
 </html>
