@@ -8,7 +8,21 @@
 <style>
 body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
 
-header { display:flex; justify-content:space-between; padding:15px; background:#111; }
+/* LOGIN */
+#authBox {
+ background:#111;
+ text-align:center;
+ padding:20px;
+}
+#authBox input {
+ padding:8px;
+ margin:5px;
+ border-radius:5px;
+ border:none;
+}
+
+/* HEADER */
+header { padding:15px; background:#111; text-align:center; }
 header h1 { color:#ff3b3b; }
 
 .topbar { background:#ff3b3b; text-align:center; padding:5px; font-size:12px; }
@@ -21,84 +35,23 @@ header h1 { color:#ff3b3b; }
  overflow:hidden;
 }
 
-/* FUNDO ANIMADO */
 .bg-animado {
  position:absolute;
- top:0;
- left:0;
  width:200%;
  height:200%;
-
  background:
  radial-gradient(circle at 20% 30%, #ff3b3b33, transparent 40%),
- radial-gradient(circle at 80% 70%, #ff000022, transparent 40%),
- radial-gradient(circle at 50% 50%, #ff3b3b11, transparent 60%);
-
- animation: moverFundo 12s ease-in-out infinite alternate;
- pointer-events:none;
+ radial-gradient(circle at 80% 70%, #ff000022, transparent 40%);
+ animation: moverFundo 12s infinite alternate;
 }
 
 @keyframes moverFundo {
- 0% { transform: translate(0,0) scale(1); }
- 50% { transform: translate(-40px,20px) scale(1.1); }
- 100% { transform: translate(40px,-20px) scale(1.2); }
-}
-
-/* BRILHO */
-.hero::after {
- content:'';
- position:absolute;
- width:100%;
- height:100%;
- top:0;
- left:0;
- background: linear-gradient(120deg, transparent, #ff3b3b22, transparent);
- animation: brilho 5s linear infinite;
- pointer-events:none;
-}
-
-@keyframes brilho {
- 0% { transform: translateX(-100%); }
- 100% { transform: translateX(100%); }
+ from { transform: translate(0,0); }
+ to { transform: translate(-40px,20px); }
 }
 
 .hero span { color:#ff3b3b; }
 
-.descricao {
- margin-top:10px;
- font-size:14px;
- color:#ccc;
- max-width:400px;
- margin:auto;
-}
-
-.insta {
- margin-top:10px;
- font-size:14px;
- color:#ff3b3b;
-}
-
-/* ANIMAÇÃO ENTRADA */
-.fade {
- opacity:0;
- transform: translateY(20px);
- animation: aparecer 0.8s forwards;
-}
-
-.delay1 { animation-delay:0.3s; }
-.delay2 { animation-delay:0.6s; }
-.delay3 { animation-delay:0.9s; }
-
-@keyframes aparecer {
- to { opacity:1; transform: translateY(0); }
-}
-
-.hero h2, .hero p, .hero button {
- position:relative;
- z-index:1;
-}
-
-/* BOTÕES */
 .botao {
  background:#ff3b3b;
  border:none;
@@ -112,230 +65,151 @@ header h1 { color:#ff3b3b; }
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
 .card { background:#1a1a1a; border-radius:15px; padding:10px; }
 
-/* SLIDER */
-.slider {
- position: relative;
- height:160px;
- overflow:hidden;
-}
-
 .slider img {
  width:100%;
- height:100%;
+ height:160px;
  object-fit:cover;
- position:absolute;
- opacity:0;
- transition: opacity 0.4s ease;
  border-radius:10px;
-}
-
-.slider img.ativo {
- opacity:1;
- position:relative;
-}
-
-/* CONTROLES */
-.controles {
- display:flex;
- justify-content:space-between;
- margin-top:5px;
-}
-
-/* ZOOM */
-.lightbox {
- display:none;
- position:fixed;
- top:0; left:0;
- width:100%; height:100%;
- background:rgba(0,0,0,0.9);
- justify-content:center;
- align-items:center;
- z-index:999;
-}
-
-.lightbox img {
- max-width:90%;
- max-height:90%;
- border-radius:10px;
- cursor:pointer;
 }
 
 .preco { color:#ff3b3b; }
 
-.filtro span { background:#222; padding:8px; margin:5px; cursor:pointer; }
-.filtro .ativo { background:#ff3b3b; }
-
-.carrinho { background:#111; padding:20px; margin:20px; border-radius:15px; }
-.remover { color:red; cursor:pointer; margin-left:10px; }
+/* WHATS */
+.whatsapp {
+ position:fixed;
+ bottom:20px;
+ right:20px;
+ background:#25D366;
+ width:60px;
+ height:60px;
+ border-radius:50%;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:24px;
+ cursor:pointer;
+}
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN -->
+<div id="authBox">
+<h2>🔐 Entrar ou Criar Conta</h2>
+<input id="email" placeholder="Email"><br>
+<input id="senha" type="password" placeholder="Senha"><br>
+<button class="botao" onclick="registrar()">Criar Conta</button>
+<button class="botao" onclick="login()">Entrar</button>
+<p id="status"></p>
+</div>
+
+<!-- SITE -->
+<div id="site" style="display:none;">
 
 <div class="topbar">Compre direto pelo WhatsApp ⚡</div>
 
 <header><h1>HnSlides</h1></header>
 
 <section class="hero">
-  <div class="bg-animado"></div>
+<div class="bg-animado"></div>
 
-  <h2 class="fade">Slides que <span>transformam</span></h2>
+<h2>Slides que <span>transformam</span></h2>
 
-  <p class="descricao fade delay1">
-    Apresentações criativas e animadas para escola, trabalhos e projetos.
-    Ideal para impressionar professores com um visual moderno e profissional.
-  </p>
+<p>Apresentações criativas e animadas para escola</p>
 
-  <p class="insta fade delay2">
-    📲 Instagram: <strong>@HndsX</strong>
-  </p>
+<p>📲 @HndsX</p>
 
-  <button class="botao fade delay3">Explorar</button>
+<button class="botao" onclick="scrollProdutos()">Explorar</button>
 </section>
 
-<div class="filtro">
-<span class="ativo" onclick="filtrar('todos', event)">Todos</span>
-<span onclick="filtrar('criativo', event)">Criativo</span>
-<span onclick="filtrar('canva', event)">Canva</span>
-<span onclick="filtrar('ppt', event)">PPT</span>
+<div class="grid" id="produtos">
+
+<div class="card">
+<img src="imagens/slide1.png">
+<h3>Slide Bob Esponja</h3>
+<p class="preco">R$ 9,90</p>
+<button class="botao" onclick="comprar('Bob Esponja')">Comprar</button>
 </div>
 
-<div class="grid">
-
-<!-- BOB -->
-<div class="card" data-cat="criativo">
-  <div class="slider">
-    <img src="imagens/slide1.png" class="ativo zoomable">
-    <img src="imagens/slide1-2.png" class="zoomable">
-    <img src="imagens/slide1-3.png" class="zoomable">
-  </div>
-  <h3>Slide Bob Esponja</h3>
-  <p class="preco">R$ 9,90</p>
-  <button class="botao" onclick="add('Slide Bob Esponja',9.9)">Adicionar</button>
+<div class="card">
+<img src="imagens/ShrekSlide.png">
+<h3>Slide Shrek</h3>
+<p class="preco">R$ 9,90</p>
+<button class="botao" onclick="comprar('Shrek')">Comprar</button>
 </div>
 
-<!-- SHREK -->
-<div class="card" data-cat="canva">
-  <div class="slider">
-    <img src="imagens/ShrekSlide.png" class="ativo zoomable">
-    <img src="imagens/ShrekSlide2.png" class="zoomable">
-    <img src="imagens/ShrekSlide3.png" class="zoomable">
-  </div>
-
-  <div class="controles">
-    <button class="botao" onclick="mudarManual(this,-1)">⬅</button>
-    <button class="botao" onclick="mudarManual(this,1)">➡</button>
-  </div>
-
-  <h3>Slide Shrek</h3>
-  <p class="preco">R$ 9,90</p>
-  <button class="botao" onclick="add('Slide Shrek',9.9)">Adicionar</button>
-</div>
-
-<!-- CHARLIE -->
-<div class="card" data-cat="ppt">
-  <div class="slider">
-    <img src="imagens/CharlieBrown1.png" class="ativo zoomable">
-    <img src="imagens/CharlieBrown2.png" class="zoomable">
-    <img src="imagens/CharlieBrown3.png" class="zoomable">
-  </div>
-
-  <div class="controles">
-    <button class="botao" onclick="mudarManual(this,-1)">⬅</button>
-    <button class="botao" onclick="mudarManual(this,1)">➡</button>
-  </div>
-
-  <h3>Slide Charlie Brown</h3>
-  <p class="preco">R$ 8,00</p>
-  <button class="botao" onclick="add('Slide Charlie Brown',8)">Adicionar</button>
+<div class="card">
+<img src="imagens/CharlieBrown1.png">
+<h3>Slide Charlie Brown</h3>
+<p class="preco">R$ 8,00</p>
+<button class="botao" onclick="comprar('Charlie Brown')">Comprar</button>
 </div>
 
 </div>
 
-<div class="carrinho">
-<h2>Carrinho</h2>
-<ul id="lista"></ul>
-<p>Total: R$ <span id="total">0</span></p>
-<button class="botao" onclick="finalizarWhatsApp()">Finalizar no WhatsApp</button>
 </div>
 
-<div class="lightbox" id="lightbox" onclick="fecharZoom()">
-  <img id="imgZoom">
-</div>
+<div class="whatsapp" onclick="abrirWhats()">💬</div>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
-let carrinho=[];
 
-function add(n,p){carrinho.push({nome:n,preco:p});atualizar();}
-function remover(i){carrinho.splice(i,1);atualizar();}
+// CONFIG FIREBASE
+const firebaseConfig = {
+ apiKey: "SUA_API_KEY",
+ authDomain: "SEU_DOMINIO.firebaseapp.com",
+};
 
-function atualizar(){
- let l=document.getElementById('lista'),t=0;
- l.innerHTML='';
- carrinho.forEach((i,x)=>{
-  let li=document.createElement('li');
-  li.innerHTML=i.nome+' - R$ '+i.preco.toFixed(2)+` <span class='remover' onclick='remover(${x})'>X</span>`;
-  l.appendChild(li);
-  t+=i.preco;
- });
- document.getElementById('total').textContent=t.toFixed(2);
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// LOGIN
+function registrar(){
+ let email=email.value;
+ let senha=senha.value;
+ auth.createUserWithEmailAndPassword(email, senha)
+ .then(()=>status.innerText="Conta criada!")
+ .catch(e=>status.innerText=e.message);
 }
 
-function filtrar(c,e){
- document.querySelectorAll('.filtro span').forEach(x=>x.classList.remove('ativo'));
- e.target.classList.add('ativo');
- document.querySelectorAll('.card').forEach(x=>{
-  x.style.display=(c==='todos'||x.dataset.cat===c)?'block':'none';
- });
+function login(){
+ let email=email.value;
+ let senha=senha.value;
+ auth.signInWithEmailAndPassword(email, senha)
+ .then(()=>status.innerText="Logado!")
+ .catch(e=>status.innerText=e.message);
 }
 
-function finalizarWhatsApp(){
- if(!carrinho.length) return alert('Carrinho vazio');
- let t=carrinho.reduce((s,i)=>s+i.preco,0);
- let msg='Olá, quero comprar:%0A%0A';
- carrinho.forEach(i=>msg+='🛒 '+i.nome+' - R$ '+i.preco.toFixed(2)+'%0A');
- msg+='%0A💰 Total: R$ '+t.toFixed(2);
- window.open('https://wa.me/5599999999999?text='+msg);
-}
-
-function mudarManual(btn,d){
- let s=btn.closest('.card').querySelector('.slider');
- let imgs=s.querySelectorAll('img');
- let a=[...imgs].findIndex(i=>i.classList.contains('ativo'));
- imgs[a].classList.remove('ativo');
- imgs[(a+d+imgs.length)%imgs.length].classList.add('ativo');
-}
-
-/* SWIPE + ZOOM */
-let arr=[],z=0,start=0;
-
-document.querySelectorAll('.slider img').forEach(img=>{
- img.onclick=e=>{
-  e.stopPropagation();
-  let s=img.closest('.slider');
-  arr=[...s.querySelectorAll('img')];
-  z=arr.indexOf(img);
-  lightbox.style.display='flex';
-  imgZoom.src=img.src;
+// LIBERAR SITE
+auth.onAuthStateChanged(user=>{
+ if(user){
+  authBox.style.display="none";
+  site.style.display="block";
+ } else {
+  authBox.style.display="block";
+  site.style.display="none";
  }
 });
 
-imgZoom.onclick=e=>{
- e.stopPropagation();
- z=(z+1)%arr.length;
- imgZoom.src=arr[z].src;
-};
+// FUNÇÕES
+function scrollProdutos(){
+ document.getElementById('produtos').scrollIntoView({behavior:'smooth'});
+}
 
-imgZoom.addEventListener('touchstart',e=>start=e.touches[0].clientX);
-imgZoom.addEventListener('touchend',e=>{
- let d=start-e.changedTouches[0].clientX;
- if(d>50)z=(z+1)%arr.length;
- else if(d<-50)z=(z-1+arr.length)%arr.length;
- imgZoom.src=arr[z].src;
-});
+function comprar(nome){
+ let msg = `Olá, quero comprar o slide ${nome}`;
+ window.open(`https://wa.me/5599999999999?text=${encodeURIComponent(msg)}`);
+}
 
-function fecharZoom(){lightbox.style.display='none';}
+function abrirWhats(){
+ window.open("https://wa.me/5599999999999");
+}
+
 </script>
 
 </body>
-     </html>
+</html>
