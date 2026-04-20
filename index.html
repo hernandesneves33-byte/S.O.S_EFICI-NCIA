@@ -21,20 +21,45 @@ header h1 { color:#ff3b3b; }
  overflow:hidden;
 }
 
+/* FUNDO ANIMADO */
 .bg-animado {
+ position:absolute;
+ top:0;
+ left:0;
+ width:200%;
+ height:200%;
+
+ background:
+ radial-gradient(circle at 20% 30%, #ff3b3b33, transparent 40%),
+ radial-gradient(circle at 80% 70%, #ff000022, transparent 40%),
+ radial-gradient(circle at 50% 50%, #ff3b3b11, transparent 60%);
+
+ animation: moverFundo 12s ease-in-out infinite alternate;
+ pointer-events:none;
+}
+
+@keyframes moverFundo {
+ 0% { transform: translate(0,0) scale(1); }
+ 50% { transform: translate(-40px,20px) scale(1.1); }
+ 100% { transform: translate(40px,-20px) scale(1.2); }
+}
+
+/* BRILHO */
+.hero::after {
+ content:'';
  position:absolute;
  width:100%;
  height:100%;
  top:0;
  left:0;
- background: radial-gradient(circle at 20% 30%, #ff3b3b22, transparent 40%),
-             radial-gradient(circle at 80% 70%, #ff000033, transparent 40%);
- animation: moverBg 8s ease-in-out infinite alternate;
+ background: linear-gradient(120deg, transparent, #ff3b3b22, transparent);
+ animation: brilho 5s linear infinite;
+ pointer-events:none;
 }
 
-@keyframes moverBg {
- 0% { transform: scale(1); }
- 100% { transform: scale(1.2); }
+@keyframes brilho {
+ 0% { transform: translateX(-100%); }
+ 100% { transform: translateX(100%); }
 }
 
 .hero span { color:#ff3b3b; }
@@ -184,7 +209,6 @@ header h1 { color:#ff3b3b; }
     <img src="imagens/slide1-2.png" class="zoomable">
     <img src="imagens/slide1-3.png" class="zoomable">
   </div>
-
   <h3>Slide Bob Esponja</h3>
   <p class="preco">R$ 9,90</p>
   <button class="botao" onclick="add('Slide Bob Esponja',9.9)">Adicionar</button>
@@ -274,7 +298,6 @@ function finalizarWhatsApp(){
  window.open('https://wa.me/5599999999999?text='+msg);
 }
 
-/* BOTÕES */
 function mudarManual(btn,d){
  let s=btn.closest('.card').querySelector('.slider');
  let imgs=s.querySelectorAll('img');
@@ -283,25 +306,8 @@ function mudarManual(btn,d){
  imgs[(a+d+imgs.length)%imgs.length].classList.add('ativo');
 }
 
-/* SWIPE */
-document.querySelectorAll('.slider').forEach(s=>{
- let imgs=s.querySelectorAll('img'),i=0,x=0;
-
- function m(n){
-  imgs[i].classList.remove('ativo');
-  i=(n+imgs.length)%imgs.length;
-  imgs[i].classList.add('ativo');
- }
-
- s.addEventListener('touchstart',e=>x=e.touches[0].clientX);
- s.addEventListener('touchend',e=>{
-  let d=x-e.changedTouches[0].clientX;
-  if(d>50)m(i+1); else if(d<-50)m(i-1);
- });
-});
-
-/* ZOOM */
-let arr=[],z=0,x=0;
+/* SWIPE + ZOOM */
+let arr=[],z=0,start=0;
 
 document.querySelectorAll('.slider img').forEach(img=>{
  img.onclick=e=>{
@@ -320,9 +326,9 @@ imgZoom.onclick=e=>{
  imgZoom.src=arr[z].src;
 };
 
-imgZoom.addEventListener('touchstart',e=>x=e.touches[0].clientX);
+imgZoom.addEventListener('touchstart',e=>start=e.touches[0].clientX);
 imgZoom.addEventListener('touchend',e=>{
- let d=x-e.changedTouches[0].clientX;
+ let d=start-e.changedTouches[0].clientX;
  if(d>50)z=(z+1)%arr.length;
  else if(d<-50)z=(z-1+arr.length)%arr.length;
  imgZoom.src=arr[z].src;
