@@ -7,16 +7,83 @@
 
 <style>
 body { margin:0; font-family: Arial; background:#0b0b0b; color:white; }
+
 header { display:flex; justify-content:space-between; padding:15px; background:#111; }
 header h1 { color:#ff3b3b; }
 
 .topbar { background:#ff3b3b; text-align:center; padding:5px; font-size:12px; }
 
-.hero { text-align:center; padding:60px 20px; background: radial-gradient(circle,#300000,#000); }
+/* HERO */
+.hero {
+ position: relative;
+ text-align:center;
+ padding:90px 20px;
+ overflow:hidden;
+}
+
+.bg-animado {
+ position:absolute;
+ width:100%;
+ height:100%;
+ top:0;
+ left:0;
+ background: radial-gradient(circle at 20% 30%, #ff3b3b22, transparent 40%),
+             radial-gradient(circle at 80% 70%, #ff000033, transparent 40%);
+ animation: moverBg 8s ease-in-out infinite alternate;
+}
+
+@keyframes moverBg {
+ 0% { transform: scale(1); }
+ 100% { transform: scale(1.2); }
+}
+
 .hero span { color:#ff3b3b; }
 
-.botao { background:#ff3b3b; border:none; padding:10px; border-radius:8px; color:white; cursor:pointer; }
+.descricao {
+ margin-top:10px;
+ font-size:14px;
+ color:#ccc;
+ max-width:400px;
+ margin:auto;
+}
 
+.insta {
+ margin-top:10px;
+ font-size:14px;
+ color:#ff3b3b;
+}
+
+/* ANIMAÇÃO ENTRADA */
+.fade {
+ opacity:0;
+ transform: translateY(20px);
+ animation: aparecer 0.8s forwards;
+}
+
+.delay1 { animation-delay:0.3s; }
+.delay2 { animation-delay:0.6s; }
+.delay3 { animation-delay:0.9s; }
+
+@keyframes aparecer {
+ to { opacity:1; transform: translateY(0); }
+}
+
+.hero h2, .hero p, .hero button {
+ position:relative;
+ z-index:1;
+}
+
+/* BOTÕES */
+.botao {
+ background:#ff3b3b;
+ border:none;
+ padding:10px;
+ border-radius:8px;
+ color:white;
+ cursor:pointer;
+}
+
+/* GRID */
 .grid { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:20px; }
 .card { background:#1a1a1a; border-radius:15px; padding:10px; }
 
@@ -42,7 +109,7 @@ header h1 { color:#ff3b3b; }
  position:relative;
 }
 
-/* BOTÕES SLIDE */
+/* CONTROLES */
 .controles {
  display:flex;
  justify-content:space-between;
@@ -82,13 +149,23 @@ header h1 { color:#ff3b3b; }
 
 <div class="topbar">Compre direto pelo WhatsApp ⚡</div>
 
-<header>
-<h1>HnSlides</h1>
-</header>
+<header><h1>HnSlides</h1></header>
 
 <section class="hero">
-<h2>Slides que <span>transformam</span></h2>
-<button class="botao">Explorar</button>
+  <div class="bg-animado"></div>
+
+  <h2 class="fade">Slides que <span>transformam</span></h2>
+
+  <p class="descricao fade delay1">
+    Apresentações criativas e animadas para escola, trabalhos e projetos.
+    Ideal para impressionar professores com um visual moderno e profissional.
+  </p>
+
+  <p class="insta fade delay2">
+    📲 Instagram: <strong>@HndsX</strong>
+  </p>
+
+  <button class="botao fade delay3">Explorar</button>
 </section>
 
 <div class="filtro">
@@ -100,7 +177,7 @@ header h1 { color:#ff3b3b; }
 
 <div class="grid">
 
-<!-- BOB ESPONJA (SEM BOTÕES) -->
+<!-- BOB -->
 <div class="card" data-cat="criativo">
   <div class="slider">
     <img src="imagens/slide1.png" class="ativo zoomable">
@@ -131,7 +208,7 @@ header h1 { color:#ff3b3b; }
   <button class="botao" onclick="add('Slide Shrek',9.9)">Adicionar</button>
 </div>
 
-<!-- CHARLIE BROWN -->
+<!-- CHARLIE -->
 <div class="card" data-cat="ppt">
   <div class="slider">
     <img src="imagens/CharlieBrown1.png" class="ativo zoomable">
@@ -151,7 +228,6 @@ header h1 { color:#ff3b3b; }
 
 </div>
 
-<!-- CARRINHO -->
 <div class="carrinho">
 <h2>Carrinho</h2>
 <ul id="lista"></ul>
@@ -159,145 +235,100 @@ header h1 { color:#ff3b3b; }
 <button class="botao" onclick="finalizarWhatsApp()">Finalizar no WhatsApp</button>
 </div>
 
-<!-- ZOOM -->
 <div class="lightbox" id="lightbox" onclick="fecharZoom()">
   <img id="imgZoom">
 </div>
 
 <script>
-let carrinho = [];
+let carrinho=[];
 
-function add(nome, preco){
- carrinho.push({nome,preco});
- atualizar();
-}
-
-function remover(i){
- carrinho.splice(i,1);
- atualizar();
-}
+function add(n,p){carrinho.push({nome:n,preco:p});atualizar();}
+function remover(i){carrinho.splice(i,1);atualizar();}
 
 function atualizar(){
- let lista=document.getElementById('lista');
- let total=0;
- lista.innerHTML='';
-
- carrinho.forEach((item,i)=>{
+ let l=document.getElementById('lista'),t=0;
+ l.innerHTML='';
+ carrinho.forEach((i,x)=>{
   let li=document.createElement('li');
-  li.innerHTML = item.nome+' - R$ '+item.preco.toFixed(2)+
-  ` <span class='remover' onclick='remover(${i})'>X</span>`;
-  lista.appendChild(li);
-  total+=item.preco;
+  li.innerHTML=i.nome+' - R$ '+i.preco.toFixed(2)+` <span class='remover' onclick='remover(${x})'>X</span>`;
+  l.appendChild(li);
+  t+=i.preco;
  });
-
- document.getElementById('total').textContent=total.toFixed(2);
+ document.getElementById('total').textContent=t.toFixed(2);
 }
 
-function filtrar(cat, ev){
- document.querySelectorAll('.filtro span').forEach(e=>e.classList.remove('ativo'));
- ev.target.classList.add('ativo');
-
- document.querySelectorAll('.card').forEach(c=>{
-  c.style.display = (cat==='todos' || c.dataset.cat===cat) ? 'block' : 'none';
+function filtrar(c,e){
+ document.querySelectorAll('.filtro span').forEach(x=>x.classList.remove('ativo'));
+ e.target.classList.add('ativo');
+ document.querySelectorAll('.card').forEach(x=>{
+  x.style.display=(c==='todos'||x.dataset.cat===c)?'block':'none';
  });
 }
 
 function finalizarWhatsApp(){
- if(carrinho.length==0){ alert('Carrinho vazio'); return; }
-
- let total = carrinho.reduce((s,i)=>s+i.preco,0);
- let msg = 'Olá, quero comprar:%0A%0A';
-
- carrinho.forEach(i=>{
-  msg += '🛒 '+i.nome+' - R$ '+i.preco.toFixed(2)+'%0A';
- });
-
- msg += '%0A💰 Total: R$ '+total.toFixed(2);
-
+ if(!carrinho.length) return alert('Carrinho vazio');
+ let t=carrinho.reduce((s,i)=>s+i.preco,0);
+ let msg='Olá, quero comprar:%0A%0A';
+ carrinho.forEach(i=>msg+='🛒 '+i.nome+' - R$ '+i.preco.toFixed(2)+'%0A');
+ msg+='%0A💰 Total: R$ '+t.toFixed(2);
  window.open('https://wa.me/5599999999999?text='+msg);
 }
 
 /* BOTÕES */
-function mudarManual(btn, direcao){
- let slider = btn.closest('.card').querySelector('.slider');
- let imgs = slider.querySelectorAll('img');
- let atual = [...imgs].findIndex(img=>img.classList.contains('ativo'));
-
- imgs[atual].classList.remove('ativo');
- let novo = (atual + direcao + imgs.length) % imgs.length;
- imgs[novo].classList.add('ativo');
+function mudarManual(btn,d){
+ let s=btn.closest('.card').querySelector('.slider');
+ let imgs=s.querySelectorAll('img');
+ let a=[...imgs].findIndex(i=>i.classList.contains('ativo'));
+ imgs[a].classList.remove('ativo');
+ imgs[(a+d+imgs.length)%imgs.length].classList.add('ativo');
 }
 
 /* SWIPE */
-document.querySelectorAll('.slider').forEach(slider=>{
- let imgs = slider.querySelectorAll('img');
- let index = 0;
- let startX = 0;
+document.querySelectorAll('.slider').forEach(s=>{
+ let imgs=s.querySelectorAll('img'),i=0,x=0;
 
- function mostrar(i){
-  imgs[index].classList.remove('ativo');
-  index = (i + imgs.length) % imgs.length;
-  imgs[index].classList.add('ativo');
+ function m(n){
+  imgs[i].classList.remove('ativo');
+  i=(n+imgs.length)%imgs.length;
+  imgs[i].classList.add('ativo');
  }
 
- slider.addEventListener('touchstart', e=>{
-  startX = e.touches[0].clientX;
- });
-
- slider.addEventListener('touchend', e=>{
-  let endX = e.changedTouches[0].clientX;
-
-  if(startX - endX > 50) mostrar(index+1);
-  else if(endX - startX > 50) mostrar(index-1);
+ s.addEventListener('touchstart',e=>x=e.touches[0].clientX);
+ s.addEventListener('touchend',e=>{
+  let d=x-e.changedTouches[0].clientX;
+  if(d>50)m(i+1); else if(d<-50)m(i-1);
  });
 });
 
-/* ZOOM + SWIPE */
-let imagensAtuais = [];
-let indexZoom = 0;
-let startZoomX = 0;
+/* ZOOM */
+let arr=[],z=0,x=0;
 
 document.querySelectorAll('.slider img').forEach(img=>{
- img.onclick = (e)=>{
+ img.onclick=e=>{
   e.stopPropagation();
-
-  let slider = img.closest('.slider');
-  imagensAtuais = [...slider.querySelectorAll('img')];
-  indexZoom = imagensAtuais.indexOf(img);
-
-  document.getElementById('lightbox').style.display='flex';
-  document.getElementById('imgZoom').src = img.src;
+  let s=img.closest('.slider');
+  arr=[...s.querySelectorAll('img')];
+  z=arr.indexOf(img);
+  lightbox.style.display='flex';
+  imgZoom.src=img.src;
  }
 });
 
-let zoom = document.getElementById('imgZoom');
-
-zoom.onclick = function(e){
+imgZoom.onclick=e=>{
  e.stopPropagation();
- indexZoom = (indexZoom+1)%imagensAtuais.length;
- this.src = imagensAtuais[indexZoom].src;
+ z=(z+1)%arr.length;
+ imgZoom.src=arr[z].src;
 };
 
-zoom.addEventListener('touchstart', e=>{
- startZoomX = e.touches[0].clientX;
+imgZoom.addEventListener('touchstart',e=>x=e.touches[0].clientX);
+imgZoom.addEventListener('touchend',e=>{
+ let d=x-e.changedTouches[0].clientX;
+ if(d>50)z=(z+1)%arr.length;
+ else if(d<-50)z=(z-1+arr.length)%arr.length;
+ imgZoom.src=arr[z].src;
 });
 
-zoom.addEventListener('touchend', e=>{
- let endX = e.changedTouches[0].clientX;
-
- if(startZoomX - endX > 50){
-  indexZoom = (indexZoom+1)%imagensAtuais.length;
- }
- else if(endX - startZoomX > 50){
-  indexZoom = (indexZoom-1+imagensAtuais.length)%imagensAtuais.length;
- }
-
- zoom.src = imagensAtuais[indexZoom].src;
-});
-
-function fecharZoom(){
- document.getElementById('lightbox').style.display='none';
-}
+function fecharZoom(){lightbox.style.display='none';}
 </script>
 
 </body>
