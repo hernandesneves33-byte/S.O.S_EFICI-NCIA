@@ -22,7 +22,6 @@ header h1 { color:#ff3b3b; }
 .slider img { width: 100%; display: none; border-radius: 10px; }
 .slider img.ativo { display: block; }
 
-/* ZOOM */
 .lightbox {
  display:none;
  position:fixed;
@@ -48,7 +47,7 @@ header h1 { color:#ff3b3b; }
 <span onclick="filtrar('criativo', event)">Criativo</span>
 <span onclick="filtrar('canva', event)">Canva</span>
 <span onclick="filtrar('ppt', event)">PPT</span>
-</div><div class="grid" id="grid"><div class="card" data-cat="criativo">
+</div><div class="grid"><!-- BOB ESPONJA --><div class="card" data-cat="criativo">
 <div class="slider">
   <img src="imagens/slide1.png" class="ativo zoomable">
   <img src="imagens/slide1-2.png" class="zoomable">
@@ -59,43 +58,40 @@ header h1 { color:#ff3b3b; }
 <h3>Slide Bob Esponja</h3>
 <p class="preco">R$ 9,90</p>
 <button class="botao" onclick="add('Slide Bob Esponja',9.9)">Adicionar</button>
-</div><div class="card" data-cat="canva"><div class="slider">
+</div><!-- SHREK --><div class="card" data-cat="canva">
+<div class="slider">
   <img src="imagens/ShrekSlide.png" class="ativo zoomable">
   <img src="imagens/ShrekSlide-2.png" class="zoomable">
   <img src="imagens/ShrekSlide-3.png" class="zoomable">
-</div><button class="botao" onclick="mudarSlide(this, -1)">⬅</button> <button class="botao" onclick="mudarSlide(this, 1)">➡</button>
-
+</div>
+<button class="botao" onclick="mudarSlide(this, -1)">⬅</button>
+<button class="botao" onclick="mudarSlide(this, 1)">➡</button>
 <h3>Slide Shrek</h3>
 <p class="preco">R$ 9,90</p>
-<button class="botao" onclick="add('Slide Shrek',9.9)">Adicionar</button></div><div class="card" data-cat="ppt">
-<img src="imagens/slide2.png" class="zoomable">
+<button class="botao" onclick="add('Slide Shrek',9.9)">Adicionar</button>
+</div><!-- CHARLIE BROWN --><div class="card" data-cat="ppt">
+<div class="slider">
+  <img src="imagens/charlie1.png" class="ativo zoomable">
+  <img src="imagens/charlie2.png" class="zoomable">
+  <img src="imagens/charlie3.png" class="zoomable">
+</div>
+<button class="botao" onclick="mudarSlide(this, -1)">⬅</button>
+<button class="botao" onclick="mudarSlide(this, 1)">➡</button>
 <h3>Slide Charlie Brown</h3>
 <p class="preco">R$ 8,00</p>
-<button class="botao" onclick="add('Slide Jornal',8)">Adicionar</button>
- </div><div class="card" data-cat="canva"><div class="slider">
-  <img src="imagens/CharlieBrown1.png" class="ativo zoomable">
-  <img src="imagens/CharlieBrownSlide-2.png" class="zoomable">
-  <img src="imagens/CharlieBrownSlide-3.png" class="zoomable">
-</div><button class="botao" onclick="mudarSlide(this, -1)">⬅</button> <button class="botao" onclick="mudarSlide(this, 1)">➡</button>
+<button class="botao" onclick="add('Slide Charlie Brown',8)">Adicionar</button>
 </div></div><div class="carrinho">
 <h2>Carrinho</h2>
 <ul id="lista"></ul>
 <p>Total: R$ <span id="total">0</span></p>
 <button class="botao" onclick="finalizarWhatsApp()">Finalizar no WhatsApp</button>
-</div><!-- LIGHTBOX --><div class="lightbox" id="lightbox" onclick="fecharZoom()">
+</div><div class="lightbox" id="lightbox" onclick="fecharZoom()">
   <img id="imgZoom">
 </div><script>
 let carrinho = [];
 
-function add(nome, preco){
- carrinho.push({nome,preco});
- atualizar();
-}
-
-function remover(i){
- carrinho.splice(i,1);
- atualizar();
-}
+function add(nome, preco){ carrinho.push({nome,preco}); atualizar(); }
+function remover(i){ carrinho.splice(i,1); atualizar(); }
 
 function atualizar(){
  let lista=document.getElementById('lista');
@@ -117,57 +113,37 @@ function filtrar(cat, ev){
  ev.target.classList.add('ativo');
 
  document.querySelectorAll('.card').forEach(c=>{
-  if(cat==='todos' || c.dataset.cat===cat){ c.style.display='block'; }
-  else{ c.style.display='none'; }
+  c.style.display = (cat==='todos' || c.dataset.cat===cat) ? 'block' : 'none';
  });
 }
 
 function finalizarWhatsApp(){
  if(carrinho.length==0){ alert('Carrinho vazio'); return; }
-
  let total = carrinho.reduce((s,i)=>s+i.preco,0);
  let msg = 'Olá, quero comprar:%0A%0A';
-
- carrinho.forEach(item=>{
-   msg += '🛒 ' + item.nome + ' - R$ ' + item.preco.toFixed(2) + '%0A';
- });
-
- msg += '%0A💰 Total: R$ ' + total.toFixed(2);
-
- let numero = '5599999999999';
- window.open('https://wa.me/' + numero + '?text=' + msg, '_blank');
+ carrinho.forEach(i=> msg += '🛒 '+i.nome+' - R$ '+i.preco.toFixed(2)+'%0A');
+ msg += '%0A💰 Total: R$ '+total.toFixed(2);
+ window.open('https://wa.me/5599999999999?text='+msg);
 }
 
 function mudarSlide(btn, direcao){
-  let card = btn.parentElement;
-  let slider = card.querySelector('.slider');
-  let imgs = slider.querySelectorAll('img');
-  
-  let atual = 0;
-  imgs.forEach((img,i)=>{
-    if(img.classList.contains('ativo')) atual = i;
-    img.classList.remove('ativo');
-  });
-
-  let novo = atual + direcao;
-
-  if(novo < 0) novo = imgs.length - 1;
-  if(novo >= imgs.length) novo = 0;
-
-  imgs[novo].classList.add('ativo');
+ let slider = btn.parentElement.querySelector('.slider');
+ let imgs = slider.querySelectorAll('img');
+ let atual = [...imgs].findIndex(img=>img.classList.contains('ativo'));
+ imgs[atual].classList.remove('ativo');
+ let novo = (atual + direcao + imgs.length) % imgs.length;
+ imgs[novo].classList.add('ativo');
 }
 
 // ZOOM
-let imagens = document.querySelectorAll('.zoomable');
-imagens.forEach(img=>{
+
+document.querySelectorAll('.zoomable').forEach(img=>{
  img.onclick = () => {
   document.getElementById('lightbox').style.display = 'flex';
   document.getElementById('imgZoom').src = img.src;
  }
 });
 
-function fecharZoom(){
- document.getElementById('lightbox').style.display = 'none';
-}
+function fecharZoom(){ document.getElementById('lightbox').style.display = 'none'; }
 </script></body>
 </html>
