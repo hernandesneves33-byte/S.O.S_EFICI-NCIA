@@ -42,6 +42,13 @@ header h1 { color:#ff3b3b; }
  position:relative;
 }
 
+/* BOTÕES SLIDE */
+.controles {
+ display:flex;
+ justify-content:space-between;
+ margin-top:5px;
+}
+
 /* ZOOM */
 .lightbox {
  display:none;
@@ -93,7 +100,7 @@ header h1 { color:#ff3b3b; }
 
 <div class="grid">
 
-<!-- BOB ESPONJA -->
+<!-- BOB ESPONJA (SEM BOTÕES) -->
 <div class="card" data-cat="criativo">
   <div class="slider">
     <img src="imagens/slide1.png" class="ativo zoomable">
@@ -114,6 +121,11 @@ header h1 { color:#ff3b3b; }
     <img src="imagens/ShrekSlide3.png" class="zoomable">
   </div>
 
+  <div class="controles">
+    <button class="botao" onclick="mudarManual(this,-1)">⬅</button>
+    <button class="botao" onclick="mudarManual(this,1)">➡</button>
+  </div>
+
   <h3>Slide Shrek</h3>
   <p class="preco">R$ 9,90</p>
   <button class="botao" onclick="add('Slide Shrek',9.9)">Adicionar</button>
@@ -125,6 +137,11 @@ header h1 { color:#ff3b3b; }
     <img src="imagens/CharlieBrown1.png" class="ativo zoomable">
     <img src="imagens/CharlieBrown2.png" class="zoomable">
     <img src="imagens/CharlieBrown3.png" class="zoomable">
+  </div>
+
+  <div class="controles">
+    <button class="botao" onclick="mudarManual(this,-1)">⬅</button>
+    <button class="botao" onclick="mudarManual(this,1)">➡</button>
   </div>
 
   <h3>Slide Charlie Brown</h3>
@@ -200,7 +217,18 @@ function finalizarWhatsApp(){
  window.open('https://wa.me/5599999999999?text='+msg);
 }
 
-/* SLIDER + SWIPE */
+/* BOTÕES */
+function mudarManual(btn, direcao){
+ let slider = btn.closest('.card').querySelector('.slider');
+ let imgs = slider.querySelectorAll('img');
+ let atual = [...imgs].findIndex(img=>img.classList.contains('ativo'));
+
+ imgs[atual].classList.remove('ativo');
+ let novo = (atual + direcao + imgs.length) % imgs.length;
+ imgs[novo].classList.add('ativo');
+}
+
+/* SWIPE */
 document.querySelectorAll('.slider').forEach(slider=>{
  let imgs = slider.querySelectorAll('img');
  let index = 0;
@@ -224,11 +252,12 @@ document.querySelectorAll('.slider').forEach(slider=>{
  });
 });
 
-/* ZOOM */
+/* ZOOM + SWIPE */
 let imagensAtuais = [];
 let indexZoom = 0;
+let startZoomX = 0;
 
-document.querySelectorAll('.slider img').forEach((img)=>{
+document.querySelectorAll('.slider img').forEach(img=>{
  img.onclick = (e)=>{
   e.stopPropagation();
 
@@ -241,11 +270,30 @@ document.querySelectorAll('.slider img').forEach((img)=>{
  }
 });
 
-document.getElementById('imgZoom').onclick = function(e){
+let zoom = document.getElementById('imgZoom');
+
+zoom.onclick = function(e){
  e.stopPropagation();
  indexZoom = (indexZoom+1)%imagensAtuais.length;
  this.src = imagensAtuais[indexZoom].src;
 };
+
+zoom.addEventListener('touchstart', e=>{
+ startZoomX = e.touches[0].clientX;
+});
+
+zoom.addEventListener('touchend', e=>{
+ let endX = e.changedTouches[0].clientX;
+
+ if(startZoomX - endX > 50){
+  indexZoom = (indexZoom+1)%imagensAtuais.length;
+ }
+ else if(endX - startZoomX > 50){
+  indexZoom = (indexZoom-1+imagensAtuais.length)%imagensAtuais.length;
+ }
+
+ zoom.src = imagensAtuais[indexZoom].src;
+});
 
 function fecharZoom(){
  document.getElementById('lightbox').style.display='none';
