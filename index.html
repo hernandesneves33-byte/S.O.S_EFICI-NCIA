@@ -2,903 +2,820 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S.O.S Eficiência 💜</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>S.O.S Eficiência</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap');
 
   :root {
-    --primary: #7c5cbf;
-    --primary-light: #9b7de8;
-    --primary-soft: #c4b5f0;
-    --accent: #e8b4f8;
-    --accent2: #f4b8d4;
-    --bg: #f0ebff;
-    --bg2: #faf7ff;
-    --card: rgba(255,255,255,0.82);
-    --card-border: rgba(180,150,240,0.25);
-    --text: #3a2d5c;
-    --text2: #6e5fa0;
-    --text3: #a390c8;
-    --shadow: 0 8px 32px rgba(124,92,191,0.13);
-    --radius: 22px;
-    --nav-h: 72px;
+    --purple: #6f6bd8;
+    --purple2: #8a5cff;
+    --purple3: #b39dff;
+    --purple-dark: #4a47a3;
+    --bg: #0d0b1a;
+    --bg2: #13102b;
+    --bg3: #1a1635;
+    --card: rgba(255,255,255,0.05);
+    --card2: rgba(255,255,255,0.08);
+    --text: #f0eeff;
+    --text2: #b8b0e0;
+    --text3: #7a72b0;
+    --border: rgba(111,107,216,0.2);
+    --glow: rgba(111,107,216,0.3);
+    --radius: 20px;
+    --radius-sm: 12px;
+    --tab-h: 72px;
+    --top-h: 60px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    height: 100%;
-    font-family: 'Nunito', sans-serif;
+    height: 100%; width: 100%;
     background: var(--bg);
     color: var(--text);
-    overflow-x: hidden;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    overflow: hidden;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* CANVAS BG */
-  #bgCanvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
+  #canvas-bg {
+    position: fixed; inset: 0; z-index: 0;
     pointer-events: none;
   }
 
-  /* APP SHELL */
   #app {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    position: relative; z-index: 1;
+    height: 100vh; width: 100%;
+    display: flex; flex-direction: column;
+    max-width: 480px; margin: 0 auto;
   }
 
   /* TOP BAR */
   .topbar {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
+    height: var(--top-h);
+    display: flex; align-items: center;
     justify-content: space-between;
-    padding: 14px 20px;
-    background: rgba(240,235,255,0.85);
-    backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--card-border);
+    padding: 0 20px;
+    background: rgba(13,11,26,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative; z-index: 10;
   }
 
   .topbar-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: -0.3px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--purple3), var(--purple2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
   }
-
-  .topbar-logo span { color: var(--accent); }
 
   .sos-btn {
-    background: linear-gradient(135deg, #e05fa0, #c44d8c);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 8px 20px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 800;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 18px rgba(196,77,140,0.35);
-    transition: transform 0.15s, box-shadow 0.15s;
+    background: linear-gradient(135deg, #e85d8a, #c23f6a);
+    border: none; border-radius: 50px;
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem; font-weight: 600;
+    padding: 7px 14px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
+    box-shadow: 0 0 20px rgba(232,93,138,0.4);
+    transition: all 0.2s;
+    animation: pulse-sos 2.5s ease-in-out infinite;
   }
-  .sos-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(196,77,140,0.45); }
-  .sos-btn:active { transform: scale(0.97); }
+
+  .sos-btn.crisis { animation: pulse-sos-fast 1s ease-in-out infinite; box-shadow: 0 0 30px rgba(232,93,138,0.7); }
+
+  @keyframes pulse-sos {
+    0%,100% { box-shadow: 0 0 20px rgba(232,93,138,0.4); }
+    50% { box-shadow: 0 0 30px rgba(232,93,138,0.7); }
+  }
+  @keyframes pulse-sos-fast {
+    0%,100% { box-shadow: 0 0 20px rgba(232,93,138,0.5); transform: scale(1); }
+    50% { box-shadow: 0 0 40px rgba(232,93,138,0.9); transform: scale(1.05); }
+  }
+
+  .streak-badge {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,193,7,0.15); border: 1px solid rgba(255,193,7,0.3);
+    border-radius: 50px; padding: 5px 10px;
+    font-size: 0.72rem; font-weight: 600; color: #ffd04b;
+  }
 
   /* PAGES */
   .pages {
-    flex: 1;
-    padding-top: 64px;
-    padding-bottom: calc(var(--nav-h) + 16px);
+    flex: 1; overflow: hidden; position: relative;
   }
 
   .page {
-    display: none;
-    padding: 20px 18px 8px;
-    animation: fadeUp 0.38s ease;
+    position: absolute; inset: 0;
+    overflow-y: auto; overflow-x: hidden;
+    padding: 20px 20px calc(var(--tab-h) + 20px);
+    opacity: 0; pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    scrollbar-width: none;
   }
-  .page.active { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .page::-webkit-scrollbar { display: none; }
+  .page.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 
   /* BOTTOM NAV */
   .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 100;
-    height: var(--nav-h);
+    height: var(--tab-h);
     display: flex;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid var(--card-border);
-    box-shadow: 0 -4px 24px rgba(124,92,191,0.09);
+    background: rgba(13,11,26,0.9);
+    backdrop-filter: blur(30px);
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    position: relative; z-index: 10;
   }
 
   .nav-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text3);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 700;
-    transition: color 0.2s;
-    padding: 6px 0;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px; border: none; background: none;
+    color: var(--text3); cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+    font-size: 0.6rem; font-weight: 500;
+    letter-spacing: 0.03em; text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .nav-btn .nav-icon {
-    font-size: 1.55rem;
-    transition: transform 0.2s;
-  }
-  .nav-btn.active { color: var(--primary); }
-  .nav-btn.active .nav-icon { transform: translateY(-3px) scale(1.12); }
+  .nav-btn .nav-icon { font-size: 1.3rem; transition: transform 0.2s; }
+  .nav-btn.active { color: var(--purple3); }
+  .nav-btn.active .nav-icon { transform: scale(1.2); }
+  .nav-btn:active { transform: scale(0.9); }
 
   /* CARDS */
   .card {
     background: var(--card);
-    border: 1px solid var(--card-border);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 22px 20px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
+    padding: 20px;
     backdrop-filter: blur(10px);
-  }
-
-  .card-title {
-    font-size: 1.05rem;
-    font-weight: 800;
-    color: var(--primary);
     margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
   }
 
-  /* FRASE DO DIA */
-  .frase-card {
-    background: linear-gradient(135deg, #9b7de8 0%, #7c5cbf 60%, #c44d8c 100%);
-    color: #fff;
-    border: none;
-    text-align: center;
-    padding: 28px 24px;
-    position: relative;
-    overflow: hidden;
+  .card-glow {
+    background: linear-gradient(135deg, rgba(111,107,216,0.12), rgba(138,92,255,0.08));
+    border-color: rgba(111,107,216,0.3);
   }
-  .frase-card::before {
-    content: '❝';
-    position: absolute;
-    top: -10px; left: 14px;
-    font-size: 5rem;
-    opacity: 0.15;
-    font-family: serif;
+
+  .section-title {
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--purple3); margin-bottom: 14px;
+  }
+
+  /* QUOTE */
+  .quote-card {
+    background: linear-gradient(135deg, rgba(111,107,216,0.15), rgba(138,92,255,0.1));
+    border: 1px solid rgba(111,107,216,0.3);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+    margin-bottom: 14px;
+    position: relative; overflow: hidden;
+  }
+
+  .quote-card::before {
+    content: '"'; position: absolute;
+    top: -10px; right: 16px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 8rem; color: rgba(111,107,216,0.1);
     line-height: 1;
   }
-  .frase-label {
-    font-size: 0.72rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0.75;
-    margin-bottom: 10px;
-  }
-  .frase-text {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 1.15rem;
-    line-height: 1.55;
-    opacity: 0.95;
-  }
-  .frase-author {
-    font-size: 0.78rem;
-    opacity: 0.7;
-    margin-top: 10px;
-    font-weight: 700;
+
+  .quote-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem; line-height: 1.5;
+    color: var(--text); font-style: italic;
+    position: relative; z-index: 1;
   }
 
-  /* HUMOR BUTTONS */
-  .humor-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-  }
-  .humor-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    background: rgba(124,92,191,0.07);
-    border: 2px solid transparent;
-    border-radius: 16px;
-    padding: 12px 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--text2);
-  }
-  .humor-btn .emoji { font-size: 1.8rem; }
-  .humor-btn:hover { background: rgba(124,92,191,0.14); border-color: var(--primary-soft); }
-  .humor-btn.selected { background: rgba(124,92,191,0.18); border-color: var(--primary); color: var(--primary); }
-
-  /* WEEK BARS */
-  .week-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    align-items: flex-end;
-    height: 80px;
-    margin-bottom: 8px;
-  }
-  .week-bar-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    height: 100%;
-    justify-content: flex-end;
-    cursor: pointer;
-  }
-  .week-bar {
-    width: 100%;
-    border-radius: 8px 8px 4px 4px;
-    transition: all 0.3s;
-    min-height: 8px;
-  }
-  .week-day-label {
-    font-size: 0.62rem;
-    font-weight: 700;
-    color: var(--text3);
+  .quote-author {
+    margin-top: 10px; font-size: 0.75rem;
+    color: var(--purple3); font-weight: 500;
   }
 
-  /* SHORTCUTS */
-  .shortcuts-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+  /* EMOTIONS */
+  .emotion-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
-  .shortcut-btn {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    background: rgba(124,92,191,0.08);
-    border: 1.5px solid var(--card-border);
-    border-radius: 18px;
-    padding: 16px 8px 14px;
+
+  .emotion-btn {
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 8px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
     cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: var(--primary);
+    transition: all 0.2s;
+    font-size: 0.65rem; color: var(--text2);
+    font-weight: 500;
+  }
+
+  .emotion-btn .em { font-size: 1.6rem; display: block; }
+  .emotion-btn:active, .emotion-btn.selected {
+    border-color: var(--purple);
+    background: rgba(111,107,216,0.2);
+    color: var(--text);
+    transform: scale(0.96);
+  }
+
+  /* WEEK CHART */
+  .week-chart {
+    display: flex; justify-content: space-between;
+    align-items: flex-end; gap: 8px;
+    height: 80px; padding: 0 4px;
+  }
+
+  .day-bar-wrap {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; gap: 6px; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .day-bar-wrap:active { opacity: 0.7; }
+
+  .day-bar {
+    width: 100%; border-radius: 6px;
+    background: var(--card2);
+    transition: all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    min-height: 4px;
+    position: relative; overflow: hidden;
+  }
+
+  .day-bar.filled {
+    background: linear-gradient(to top, var(--purple-dark), var(--purple3));
+  }
+
+  .day-label {
+    font-size: 0.6rem; color: var(--text3); font-weight: 500;
+  }
+
+  /* QUICK ACTIONS */
+  .quick-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .quick-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    display: flex; align-items: center; gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text2); font-size: 0.8rem; font-weight: 500;
+    text-align: left;
+  }
+
+  .quick-btn .qi { font-size: 1.4rem; }
+  .quick-btn:active {
+    background: rgba(111,107,216,0.15);
+    border-color: var(--purple);
+    transform: scale(0.97);
+  }
+
+  /* EXERCISES */
+  .exercise-tabs {
+    display: flex; gap: 8px;
+    overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none; margin-bottom: 16px;
+  }
+  .exercise-tabs::-webkit-scrollbar { display: none; }
+
+  .ex-tab {
+    flex-shrink: 0;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 8px 14px;
+    font-size: 0.72rem; font-weight: 500;
+    color: var(--text2); cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+
+  .ex-tab.active {
+    background: var(--purple);
+    border-color: var(--purple);
+    color: white;
+  }
+
+  .exercise-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px; margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .exercise-card:active { transform: scale(0.98); }
+
+  .ex-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; margin-bottom: 8px;
+  }
+
+  .ex-title { font-size: 0.95rem; font-weight: 600; color: var(--text); }
+  .ex-icon { font-size: 1.5rem; }
+  .ex-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+
+  .ex-start-btn {
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    border: none; border-radius: 50px;
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    padding: 10px 20px; cursor: pointer;
     transition: all 0.2s;
   }
-  .shortcut-btn .icon { font-size: 1.6rem; }
-  .shortcut-btn:hover { background: rgba(124,92,191,0.16); transform: translateY(-2px); }
+  .ex-start-btn:active { transform: scale(0.97); opacity: 0.9; }
 
-  /* SECTION HEADER */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .ver-mais {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--primary-light);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-    text-decoration: underline;
+  /* BREATHING */
+  .breath-container {
+    display: flex; flex-direction: column;
+    align-items: center; padding: 20px 0;
   }
 
-  /* DIARIO */
+  .breath-circle-wrap {
+    position: relative; width: 180px; height: 180px;
+    margin: 20px auto;
+  }
+
+  .breath-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid rgba(111,107,216,0.3);
+    animation: none;
+  }
+
+  .breath-core {
+    position: absolute;
+    inset: 20px; border-radius: 50%;
+    background: radial-gradient(circle, var(--purple2), var(--purple-dark));
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 40px var(--glow);
+    transition: all 0.5s ease;
+  }
+
+  .breath-text-inner {
+    font-size: 0.8rem; color: white; font-weight: 500;
+    text-align: center; line-height: 1.3;
+  }
+
+  .breath-phase {
+    font-size: 1rem; font-weight: 600;
+    color: var(--purple3); margin-top: 8px;
+    min-height: 1.5rem; text-align: center;
+    transition: opacity 0.4s;
+  }
+
+  .breath-count {
+    font-size: 2.5rem; font-weight: 300;
+    color: var(--text); font-family: 'DM Serif Display', serif;
+    min-height: 3rem; text-align: center;
+  }
+
+  @keyframes breathe-in {
+    from { transform: scale(1); box-shadow: 0 0 20px var(--glow); }
+    to { transform: scale(1.4); box-shadow: 0 0 60px rgba(111,107,216,0.6); }
+  }
+  @keyframes breathe-out {
+    from { transform: scale(1.4); box-shadow: 0 0 60px rgba(111,107,216,0.6); }
+    to { transform: scale(1); box-shadow: 0 0 20px var(--glow); }
+  }
+  @keyframes breathe-hold {
+    from, to { transform: scale(1.4); }
+  }
+
+  .breath-controls {
+    display: flex; gap: 12px; margin-top: 16px;
+  }
+
+  .ctrl-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 50px; padding: 12px 24px;
+    color: var(--text); cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 600;
+    transition: all 0.2s;
+  }
+  .ctrl-btn.primary {
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    border-color: transparent; color: white;
+  }
+  .ctrl-btn:active { transform: scale(0.95); }
+
+  /* DIARY */
   .diary-textarea {
-    width: 100%;
-    min-height: 180px;
-    border: 2px solid var(--card-border);
-    border-radius: 16px;
-    padding: 16px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    color: var(--text);
-    background: rgba(255,255,255,0.7);
-    resize: vertical;
-    outline: none;
+    width: 100%; min-height: 140px;
+    background: var(--card2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; padding: 14px;
+    resize: none; outline: none;
     transition: border-color 0.2s;
     line-height: 1.6;
   }
-  .diary-textarea:focus { border-color: var(--primary); }
+  .diary-textarea:focus { border-color: var(--purple); }
+  .diary-textarea::placeholder { color: var(--text3); }
 
-  .btn-row { display: flex; gap: 10px; margin-top: 12px; }
-
-  .btn-primary {
-    flex: 1;
-    padding: 13px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 16px rgba(124,92,191,0.3);
-  }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,92,191,0.4); }
-  .btn-primary:active { transform: scale(0.97); }
-
-  .btn-secondary {
-    padding: 13px 20px;
-    border: 2px solid var(--card-border);
-    border-radius: 14px;
-    background: rgba(255,255,255,0.6);
-    color: var(--text2);
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
+  .save-btn {
+    width: 100%; margin-top: 10px;
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    padding: 14px; cursor: pointer;
     transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(255,255,255,0.9); border-color: var(--primary-soft); }
+  .save-btn:active { opacity: 0.85; transform: scale(0.98); }
 
-  .diary-meta {
-    font-size: 0.75rem;
-    color: var(--text3);
-    margin-top: 10px;
+  .diary-entry {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px; margin-bottom: 10px;
   }
 
-  .humor-history {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 4px;
-    max-height: 220px;
-    overflow-y: auto;
+  .entry-meta {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 8px;
   }
-  .humor-history-item {
-    display: flex;
-    align-items: center;
+
+  .entry-date { font-size: 0.7rem; color: var(--purple3); font-weight: 600; }
+
+  .entry-actions { display: flex; gap: 8px; }
+
+  .entry-action {
+    background: none; border: none;
+    color: var(--text3); cursor: pointer;
+    font-size: 0.75rem; padding: 2px 6px;
+    border-radius: 6px; transition: all 0.2s;
+  }
+  .entry-action:hover { color: var(--text); background: var(--card2); }
+
+  .entry-text { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+  /* LIBRARY */
+  .lib-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px; margin-bottom: 10px;
+    cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .lib-card:active { transform: scale(0.98); border-color: var(--purple); }
+
+  .lib-info { display: flex; align-items: center; gap: 14px; }
+  .lib-icon { font-size: 1.5rem; }
+  .lib-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .lib-sub { font-size: 0.72rem; color: var(--text3); margin-top: 2px; }
+  .lib-arrow { color: var(--text3); font-size: 0.8rem; }
+
+  /* PROFILE */
+  .profile-avatar {
+    width: 70px; height: 70px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 12px;
+    box-shadow: 0 0 30px var(--glow);
+  }
+
+  .stat-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    background: rgba(124,92,191,0.06);
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 0.82rem;
-    color: var(--text2);
-  }
-  .humor-history-item .hi-emoji { font-size: 1.3rem; }
-  .humor-history-item .hi-date { margin-left: auto; font-size: 0.72rem; color: var(--text3); }
-
-  /* RESPIRAÇÃO */
-  .breath-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0 10px;
-  }
-  .breath-circle-wrap {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    margin-bottom: 24px;
-  }
-  .breath-circle {
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(155,125,232,0.25), rgba(196,77,140,0.15));
-    border: 3px solid rgba(155,125,232,0.4);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: transform 1s ease-in-out;
-    box-shadow: 0 0 0 0 rgba(155,125,232,0.3);
-  }
-  .breath-circle.inhale {
-    animation: inhaleAnim 4s ease-in-out forwards;
-  }
-  .breath-circle.hold {
-    animation: holdAnim 2s ease forwards;
-  }
-  .breath-circle.exhale {
-    animation: exhaleAnim 4s ease-in-out forwards;
-  }
-  @keyframes inhaleAnim {
-    from { transform: scale(1); box-shadow: 0 0 0 0 rgba(155,125,232,0.3); }
-    to { transform: scale(1.3); box-shadow: 0 0 40px 10px rgba(155,125,232,0.2); }
-  }
-  @keyframes holdAnim {
-    from { transform: scale(1.3); }
-    to { transform: scale(1.3); }
-  }
-  @keyframes exhaleAnim {
-    from { transform: scale(1.3); box-shadow: 0 0 40px 10px rgba(155,125,232,0.2); }
-    to { transform: scale(1); box-shadow: 0 0 0 0 rgba(155,125,232,0); }
-  }
-  .breath-phase {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--primary);
-  }
-  .breath-timer {
-    font-size: 2rem;
-    font-weight: 900;
-    color: var(--primary-light);
-    margin-top: 4px;
-  }
-  .breath-label {
-    font-size: 0.78rem;
-    color: var(--text3);
-    font-weight: 600;
-    margin-top: 2px;
   }
 
-  .tip-card {
-    background: linear-gradient(135deg, rgba(232,180,248,0.3), rgba(244,184,212,0.25));
-    border: 1.5px solid rgba(200,150,240,0.25);
-    border-radius: 18px;
-    padding: 18px;
-    margin-top: 6px;
-    text-align: center;
-  }
-  .tip-text {
-    font-size: 0.92rem;
-    color: var(--text2);
-    line-height: 1.55;
-    font-weight: 600;
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px; text-align: center;
   }
 
-  /* BIBLIOTECA */
-  .article-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    background: rgba(255,255,255,0.75);
-    border: 1.5px solid var(--card-border);
-    border-radius: 18px;
-    padding: 16px 18px;
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem; color: var(--purple3);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.65rem; color: var(--text3);
+    margin-top: 4px; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  .action-btn {
+    width: 100%; background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; font-weight: 500;
+    padding: 14px 18px; cursor: pointer;
+    text-align: left; transition: all 0.2s;
+    display: flex; align-items: center; gap: 10px;
     margin-bottom: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
   }
-  .article-item:hover { background: rgba(255,255,255,0.95); transform: translateX(4px); box-shadow: var(--shadow); }
-  .article-emoji { font-size: 2rem; }
-  .article-info { flex: 1; }
-  .article-title { font-size: 0.95rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
-  .article-desc { font-size: 0.78rem; color: var(--text3); font-weight: 600; }
-  .article-arrow { color: var(--primary-soft); font-size: 1.2rem; }
+  .action-btn:active { transform: scale(0.98); border-color: var(--purple); }
 
-  /* EU PAGE */
-  .about-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
-    color: #fff;
-    border-radius: 50px;
-    padding: 8px 18px;
-    font-size: 0.82rem;
-    font-weight: 800;
-    margin-bottom: 16px;
-  }
-  .about-text {
-    font-size: 0.9rem;
-    color: var(--text2);
-    line-height: 1.65;
-    font-weight: 600;
-  }
+  .danger-btn { color: #e85d8a; border-color: rgba(232,93,138,0.3); }
 
-  .btn-danger {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid rgba(220,70,70,0.3);
-    border-radius: 14px;
-    background: rgba(255,100,100,0.07);
-    color: #c04040;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
-  }
-  .btn-danger:hover { background: rgba(255,100,100,0.15); }
-
-  /* MODAIS */
+  /* MODALS */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(30,15,60,0.55);
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(0,0,0,0.7);
     backdrop-filter: blur(8px);
-    display: flex;
-    align-items: flex-end;
+    display: flex; align-items: flex-end;
     justify-content: center;
-    opacity: 0;
-    pointer-events: none;
+    opacity: 0; pointer-events: none;
     transition: opacity 0.3s;
   }
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: all;
-  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
   .modal {
     background: var(--bg2);
-    border-radius: 28px 28px 0 0;
-    padding: 28px 24px 40px;
-    width: 100%;
-    max-width: 520px;
-    transform: translateY(100%);
-    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
-    max-height: 80vh;
-    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+    width: 100%; max-width: 480px;
+    padding: 24px 22px 36px;
+    transform: translateY(30px);
+    transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
+    max-height: 80vh; overflow-y: auto;
+    scrollbar-width: none;
   }
-  .modal-overlay.open .modal {
-    transform: translateY(0);
-  }
+  .modal::-webkit-scrollbar { display: none; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
   .modal-handle {
-    width: 40px;
-    height: 5px;
-    background: var(--primary-soft);
-    border-radius: 10px;
+    width: 40px; height: 4px;
+    background: var(--text3); border-radius: 4px;
     margin: 0 auto 20px;
   }
+
   .modal-title {
-    font-size: 1.2rem;
-    font-weight: 900;
-    color: var(--primary);
-    margin-bottom: 14px;
-    text-align: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem; margin-bottom: 12px;
+    color: var(--text);
   }
-  .modal-body {
-    font-size: 0.92rem;
-    color: var(--text2);
-    line-height: 1.7;
-    font-weight: 600;
-  }
+
+  .modal-body { color: var(--text2); font-size: 0.88rem; line-height: 1.7; }
+
   .modal-close {
-    width: 100%;
-    padding: 13px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 18px;
+    width: 100%; margin-top: 18px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    padding: 14px; cursor: pointer; transition: all 0.2s;
   }
+  .modal-close:active { opacity: 0.8; }
 
   /* SOS MODAL */
-  .sos-modal .modal-title { color: #c44d8c; }
-  .sos-modal .cvv-chip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #e05fa0, #c44d8c);
-    color: #fff;
-    border-radius: 50px;
-    padding: 14px 24px;
-    font-size: 1.3rem;
-    font-weight: 900;
-    margin: 16px 0;
-    box-shadow: 0 4px 20px rgba(196,77,140,0.3);
+  .sos-modal-content { text-align: center; }
+  .sos-heart { font-size: 3rem; margin-bottom: 12px; }
+
+  .sos-msg {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem; margin-bottom: 8px; color: var(--text);
   }
-  .sos-modal .btn-call {
+
+  .sos-sub { font-size: 0.85rem; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+
+  .call-btn {
     width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #e05fa0, #c44d8c);
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 10px;
-    box-shadow: 0 4px 16px rgba(196,77,140,0.3);
+    background: linear-gradient(135deg, #e85d8a, #c23f6a);
+    border: none; border-radius: var(--radius-sm);
+    color: white; font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    padding: 16px; cursor: pointer;
+    transition: all 0.2s; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .call-btn:active { opacity: 0.85; transform: scale(0.98); }
+
+  /* EXERCISE MODAL */
+  .ex-modal-timer {
+    text-align: center; padding: 16px 0;
   }
 
-  /* SEMANA MODAL */
-  .day-modal-emoji { font-size: 3rem; text-align: center; margin: 14px 0 8px; }
-  .day-modal-humor { text-align: center; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
-  .day-modal-date { text-align: center; font-size: 0.8rem; color: var(--text3); font-weight: 600; margin-top: 4px; }
-
-  /* SOBRE */
-  .sobre-text {
-    font-size: 0.9rem;
-    color: var(--text2);
-    line-height: 1.7;
-    font-weight: 600;
-  }
-  .sobre-highlight {
-    color: var(--primary);
-    font-weight: 800;
+  .ex-timer-display {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem; color: var(--purple3);
+    margin-bottom: 8px;
   }
 
-  /* ULTIMO HUMOR */
-  .last-humor-display {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    background: rgba(124,92,191,0.08);
-    border-radius: 14px;
-    padding: 12px 16px;
-    margin-top: 12px;
-    font-size: 0.9rem;
-    color: var(--text2);
-    font-weight: 600;
+  .ex-timer-label {
+    font-size: 0.85rem; color: var(--text2);
+    min-height: 1.4rem;
   }
-  .last-humor-display .lh-emoji { font-size: 1.6rem; }
 
-  /* SCROLL */
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--primary-soft); border-radius: 4px; }
-
-  /* PAGE TITLE */
-  .page-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.55rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 18px;
+  /* ACHIEVEMENTS */
+  .achievement-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
   }
-  .page-title span { color: var(--accent); }
+  .achievement-row:last-child { border-bottom: none; }
+
+  .ach-icon { font-size: 1.6rem; }
+  .ach-info { flex: 1; }
+  .ach-name { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .ach-desc { font-size: 0.72rem; color: var(--text3); }
+  .ach-badge {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--card2); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+  }
+  .ach-badge.unlocked {
+    background: linear-gradient(135deg, var(--purple), var(--purple2));
+    border-color: transparent;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: calc(var(--tab-h) + 16px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: rgba(111,107,216,0.9);
+    backdrop-filter: blur(20px);
+    color: white; border-radius: 50px;
+    padding: 10px 20px; font-size: 0.82rem; font-weight: 500;
+    z-index: 200; opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34,1.3,0.64,1);
+    white-space: nowrap;
+    max-width: calc(100vw - 40px);
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* CRISIS BANNER */
+  .crisis-banner {
+    background: linear-gradient(135deg, rgba(232,93,138,0.15), rgba(194,63,106,0.1));
+    border: 1px solid rgba(232,93,138,0.4);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px; margin-bottom: 14px;
+    display: none; align-items: center; gap: 10px;
+  }
+  .crisis-banner.show { display: flex; }
+  .crisis-banner p { font-size: 0.82rem; color: #f0a0c0; line-height: 1.5; }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--card2);
+    border-radius: 10px; height: 6px;
+    margin: 10px 0; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 10px;
+    background: linear-gradient(to right, var(--purple), var(--purple3));
+    transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .info-badge {
+    background: rgba(179,157,255,0.12);
+    border: 1px solid rgba(179,157,255,0.2);
+    border-radius: 8px; padding: 12px 14px;
+    font-size: 0.75rem; color: var(--text3);
+    line-height: 1.6; text-align: center;
+  }
+
+  .team-name { font-size: 0.82rem; color: var(--text2); padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .team-name:last-child { border-bottom: none; }
+  .team-role { font-size: 0.7rem; color: var(--purple3); font-weight: 500; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(16px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.4s ease both; }
+  .delay-1 { animation-delay: 0.05s; }
+  .delay-2 { animation-delay: 0.1s; }
+  .delay-3 { animation-delay: 0.15s; }
+  .delay-4 { animation-delay: 0.2s; }
 </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
+<canvas id="canvas-bg"></canvas>
 
 <div id="app">
   <!-- TOP BAR -->
   <div class="topbar">
-    <div class="topbar-logo">S.O.S <span>Eficiência</span> 💜</div>
-    <button class="sos-btn" onclick="openModal('sosModal')">🆘 SOS</button>
+    <span class="topbar-logo">💜 S.O.S Eficiência</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="streak-badge" id="streak-badge">🔥 <span id="streak-count">0</span>d</div>
+      <button class="sos-btn" id="sos-btn" onclick="openSOS()">🆘 SOS</button>
+    </div>
   </div>
 
   <!-- PAGES -->
   <div class="pages">
 
-    <!-- INÍCIO -->
-    <div id="page-inicio" class="page active">
-      <div class="card frase-card">
-        <div class="frase-label">✨ Frase do dia</div>
-        <div class="frase-text" id="fraseText">Carregando...</div>
-        <div class="frase-author" id="fraseAuthor"></div>
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="crisis-banner" id="crisis-banner">
+        <span style="font-size:1.5rem">💜</span>
+        <p>Percebemos que você está passando por um momento difícil. Você não está sozinho(a).</p>
       </div>
 
-      <div class="card">
-        <div class="card-title">🌸 Como está hoje?</div>
-        <div class="humor-grid">
-          <button class="humor-btn" onclick="saveHumor('Muito mal','😰')" data-key="Muito mal">
-            <span class="emoji">😰</span>Muito mal
-          </button>
-          <button class="humor-btn" onclick="saveHumor('Pra baixo','😔')" data-key="Pra baixo">
-            <span class="emoji">😔</span>Pra baixo
-          </button>
-          <button class="humor-btn" onclick="saveHumor('Mais ou menos','😐')" data-key="Mais ou menos">
-            <span class="emoji">😐</span>Mais ou menos
-          </button>
-          <button class="humor-btn" onclick="saveHumor('Bem','😊')" data-key="Bem">
-            <span class="emoji">😊</span>Bem
-          </button>
-          <button class="humor-btn" onclick="saveHumor('Ótima','🤩')" data-key="Ótima">
-            <span class="emoji">🤩</span>Ótima
-          </button>
-        </div>
-        <div id="lastHumorDisplay" class="last-humor-display" style="display:none;">
-          <span class="lh-emoji" id="lastHumorEmoji"></span>
-          <div>
-            <div style="font-size:0.78rem;color:var(--text3);font-weight:700;">Último registro</div>
-            <div id="lastHumorLabel"></div>
-          </div>
-          <div style="margin-left:auto;font-size:0.72rem;color:var(--text3);" id="lastHumorDate"></div>
-        </div>
+      <div class="quote-card fade-up">
+        <p class="quote-text" id="quote-text">Carregando...</p>
+        <p class="quote-author" id="quote-author"></p>
       </div>
 
-      <div class="card">
-        <div class="section-header">
-          <div class="section-title">📊 Sua semana</div>
-          <button class="ver-mais" onclick="goTo('diario')">Ver mais →</button>
-        </div>
-        <div class="week-grid" id="weekGrid"></div>
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:2px;" id="weekLabels"></div>
+      <div class="card fade-up delay-1">
+        <div class="section-title">Como está hoje?</div>
+        <div class="emotion-grid" id="emotion-grid"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">🚀 Atalhos rápidos</div>
-        <div class="shortcuts-grid">
-          <button class="shortcut-btn" onclick="goTo('exercicios')">
-            <span class="icon">🌬️</span>Respiração
-          </button>
-          <button class="shortcut-btn" onclick="goTo('diario')">
-            <span class="icon">📖</span>Diário
-          </button>
-          <button class="shortcut-btn" onclick="goTo('biblioteca')">
-            <span class="icon">📚</span>Biblioteca
-          </button>
-          <button class="shortcut-btn" onclick="openModal('sosModal')">
-            <span class="icon">🆘</span>Ajuda
-          </button>
-        </div>
+      <div class="card fade-up delay-2">
+        <div class="section-title">Sua Semana</div>
+        <div class="week-chart" id="week-chart"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">💜 Sobre o projeto</div>
-        <p class="sobre-text">
-          O <span class="sobre-highlight">S.O.S Eficiência</span> é um espaço digital acolhedor criado para apoiar mulheres que vivem com ansiedade no dia a dia. Aqui você encontra ferramentas práticas, exercícios de respiração, um diário emocional e recursos educativos — tudo em um só lugar, com carinho e empatia. 🌸
-        </p>
-      </div>
-    </div>
-
-    <!-- DIÁRIO -->
-    <div id="page-diario" class="page">
-      <div class="page-title">📖 Meu <span>Diário</span></div>
-
-      <div class="card">
-        <div class="card-title">✍️ Escreva como você se sente</div>
-        <textarea class="diary-textarea" id="diaryText" placeholder="Hoje eu me sinto... O que passou pela minha cabeça foi... Estou com saudade de..."></textarea>
-        <div class="btn-row">
-          <button class="btn-primary" onclick="saveDiary()">💾 Salvar</button>
-          <button class="btn-secondary" onclick="clearDiary()">🗑 Limpar</button>
-        </div>
-        <div class="diary-meta" id="diaryMeta"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🌙 Histórico de humores</div>
-        <div class="humor-history" id="humorHistory">
-          <div style="color:var(--text3);font-size:0.85rem;font-weight:600;text-align:center;padding:16px 0;">Nenhum humor registrado ainda 🌱</div>
+      <div class="fade-up delay-3">
+        <div class="section-title">Atalhos Rápidos</div>
+        <div class="quick-grid">
+          <button class="quick-btn" onclick="navTo('exercises')"><span class="qi">🌬️</span> Respiração</button>
+          <button class="quick-btn" onclick="navTo('diary')"><span class="qi">📖</span> Diário</button>
+          <button class="quick-btn" onclick="navTo('exercises')"><span class="qi">✨</span> Exercícios</button>
+          <button class="quick-btn" onclick="openSOS()"><span class="qi">🆘</span> Ajuda</button>
         </div>
       </div>
     </div>
 
-    <!-- EXERCÍCIOS -->
-    <div id="page-exercicios" class="page">
-      <div class="page-title">🌬️ <span>Exercícios</span></div>
-
-      <div class="card">
-        <div class="card-title">🫁 Respiração 4-2-4</div>
-        <div class="breath-container">
-          <div class="breath-circle-wrap">
-            <div class="breath-circle" id="breathCircle">
-              <div class="breath-phase" id="breathPhase">Pronta?</div>
-              <div class="breath-timer" id="breathTimer">—</div>
-              <div class="breath-label" id="breathLabel">Toque em Começar</div>
-            </div>
-          </div>
-          <div class="btn-row">
-            <button class="btn-primary" id="breathStartBtn" onclick="toggleBreath()">▶️ Começar</button>
-          </div>
-        </div>
-        <div style="background:rgba(124,92,191,0.07);border-radius:14px;padding:14px 16px;margin-top:4px;">
-          <div style="font-size:0.8rem;color:var(--text3);font-weight:700;margin-bottom:6px;">ℹ️ Como funciona:</div>
-          <div style="font-size:0.84rem;color:var(--text2);font-weight:600;line-height:1.6;">
-            🟣 Inspire por <b>4 segundos</b> — expanda os pulmões<br>
-            ⚪ Segure por <b>2 segundos</b> — sinta o ar<br>
-            🫧 Expire por <b>4 segundos</b> — solte tudo
-          </div>
-        </div>
+    <!-- DIARY -->
+    <div class="page" id="page-diary">
+      <div class="section-title fade-up">Novo Registro</div>
+      <div class="card fade-up delay-1">
+        <textarea class="diary-textarea" id="diary-input" placeholder="Como foi seu dia? O que você está sentindo? Escreva livremente..."></textarea>
+        <button class="save-btn" onclick="saveDiary()">💾 Salvar</button>
       </div>
-
-      <div class="card">
-        <div class="section-header">
-          <div class="section-title">💡 Dica de relaxamento</div>
-          <button class="ver-mais" onclick="newTip()">Nova dica ↻</button>
-        </div>
-        <div class="tip-card">
-          <div class="tip-text" id="tipText">Carregando...</div>
-        </div>
-      </div>
+      <div class="section-title fade-up delay-2">Registros Anteriores</div>
+      <div id="diary-list"></div>
     </div>
 
-    <!-- BIBLIOTECA -->
-    <div id="page-biblioteca" class="page">
-      <div class="page-title">📚 <span>Biblioteca</span></div>
-
-      <div class="article-item" onclick="openArticle(0)">
-        <div class="article-emoji">🧠</div>
-        <div class="article-info">
-          <div class="article-title">O que é ansiedade?</div>
-          <div class="article-desc">Entenda o que acontece no seu corpo e mente</div>
-        </div>
-        <div class="article-arrow">›</div>
-      </div>
-
-      <div class="article-item" onclick="openArticle(1)">
-        <div class="article-emoji">🌪️</div>
-        <div class="article-info">
-          <div class="article-title">Crise de ansiedade: o que fazer?</div>
-          <div class="article-desc">Técnicas para o momento de crise</div>
-        </div>
-        <div class="article-arrow">›</div>
-      </div>
-
-      <div class="article-item" onclick="openArticle(2)">
-        <div class="article-emoji">🌸</div>
-        <div class="article-info">
-          <div class="article-title">Autocuidado emocional</div>
-          <div class="article-desc">Pequenas práticas que fazem grande diferença</div>
-        </div>
-        <div class="article-arrow">›</div>
-      </div>
-
-      <div class="article-item" onclick="openArticle(3)">
-        <div class="article-emoji">🤝</div>
-        <div class="article-info">
-          <div class="article-title">Quando pedir ajuda profissional?</div>
-          <div class="article-desc">Sinais de que é hora de buscar apoio especializado</div>
-        </div>
-        <div class="article-arrow">›</div>
-      </div>
-
-      <div class="card" style="background:linear-gradient(135deg,rgba(155,125,232,0.12),rgba(196,77,140,0.08));border-color:rgba(155,125,232,0.2);">
-        <div style="font-size:0.85rem;color:var(--text2);font-weight:600;line-height:1.6;text-align:center;">
-          💜 Lembre-se: buscar informação é um ato de amor próprio. Você não está sozinha.
-        </div>
-      </div>
+    <!-- EXERCISES -->
+    <div class="page" id="page-exercises">
+      <div class="section-title fade-up">Exercícios por emoção</div>
+      <div class="exercise-tabs fade-up delay-1" id="exercise-tabs"></div>
+      <div id="exercise-list"></div>
     </div>
 
-    <!-- EU -->
-    <div id="page-eu" class="page">
-      <div class="page-title">👤 <span>Sobre mim</span></div>
+    <!-- LIBRARY -->
+    <div class="page" id="page-library">
+      <div class="section-title fade-up">Biblioteca</div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-bottom:16px;" class="fade-up delay-1">Artigos para te ajudar a entender e cuidar da sua saúde emocional.</p>
+      <div id="library-list" class="fade-up delay-2"></div>
+    </div>
 
-      <div class="card" style="text-align:center;">
-        <div style="font-size:4rem;margin-bottom:12px;">💜</div>
-        <div class="about-badge">✨ S.O.S Eficiência</div>
-        <div class="about-text" style="text-align:center;">
-          Um espaço criado com carinho para apoiar mulheres em sua jornada emocional. Seus dados ficam apenas no seu dispositivo — com privacidade e segurança. 🌸
-        </div>
+    <!-- PROFILE -->
+    <div class="page" id="page-profile">
+      <div style="text-align:center;margin-bottom:20px;" class="fade-up">
+        <div class="profile-avatar">🌸</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;">Meu Espaço</div>
+        <div style="font-size:0.8rem;color:var(--text3);margin-top:4px;">S.O.S Eficiência — Cuide-se</div>
       </div>
 
-      <div class="card">
-        <div class="card-title">🗃️ Seus dados</div>
-        <div id="statsDisplay" style="font-size:0.88rem;color:var(--text2);font-weight:600;line-height:2;"></div>
+      <div class="card fade-up delay-1" style="margin-bottom:14px;">
+        <div class="section-title">Meu Progresso</div>
+        <div class="stat-grid" id="stat-grid"></div>
       </div>
 
-      <div class="card">
-        <div class="card-title">⚙️ Configurações</div>
-        <button class="btn-primary" onclick="exportData()" style="margin-bottom:10px;">📤 Exportar meus dados (JSON)</button>
-        <button class="btn-danger" onclick="confirmReset()">🗑 Resetar dados do app</button>
+      <div class="card fade-up delay-2">
+        <div class="section-title">Conquistas</div>
+        <div id="achievements-list"></div>
       </div>
 
-      <div class="card">
-        <div style="font-size:0.78rem;color:var(--text3);font-weight:600;text-align:center;line-height:1.7;">
-          Feito com 💜 para mulheres incríveis<br>
-          Em caso de emergência: CVV 188 (24h, gratuito)
-        </div>
+      <div class="fade-up delay-3" style="margin-top:14px;">
+        <div class="section-title">Dados</div>
+        <button class="action-btn" onclick="exportData()">📤 Exportar meus dados (JSON)</button>
+        <button class="action-btn danger-btn" onclick="resetData()">🗑️ Resetar todos os dados</button>
+      </div>
+
+      <div class="info-badge fade-up delay-4" style="margin-top:14px;">
+        🔒 Seus dados ficam apenas no seu dispositivo.<br>Nunca compartilhamos suas informações.
+      </div>
+
+      <div class="card fade-up delay-4" style="margin-top:14px;">
+        <div class="section-title">Equipe de Desenvolvimento</div>
+        <div class="team-name"><div class="team-role">Orientador</div>Joe Garcia Lima de Morais</div>
+        <div class="team-name"><div class="team-role">Líder do Projeto & Desenvolvedor</div>Ernandes da Conceição Neves</div>
+        <div class="team-name"><div class="team-role">Equipe de Apoio</div>Isnariane Pereira dos Santos</div>
+        <div class="team-name">Nilmar das Neves Santos</div>
+        <div class="team-name">Maria Iasmin Pires de Moraes</div>
+        <div class="team-name">Evandro da Silva Barros</div>
       </div>
     </div>
 
@@ -906,465 +823,823 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="goTo('inicio')" id="nav-inicio">
+    <button class="nav-btn active" data-page="home" onclick="navTo('home')">
       <span class="nav-icon">🏠</span>Início
     </button>
-    <button class="nav-btn" onclick="goTo('diario')" id="nav-diario">
+    <button class="nav-btn" data-page="diary" onclick="navTo('diary')">
       <span class="nav-icon">📖</span>Diário
     </button>
-    <button class="nav-btn" onclick="goTo('exercicios')" id="nav-exercicios">
+    <button class="nav-btn" data-page="exercises" onclick="navTo('exercises')">
       <span class="nav-icon">🌬️</span>Exercícios
     </button>
-    <button class="nav-btn" onclick="goTo('biblioteca')" id="nav-biblioteca">
+    <button class="nav-btn" data-page="library" onclick="navTo('library')">
       <span class="nav-icon">📚</span>Biblioteca
     </button>
-    <button class="nav-btn" onclick="goTo('eu')" id="nav-eu">
+    <button class="nav-btn" data-page="profile" onclick="navTo('profile')">
       <span class="nav-icon">👤</span>Eu
     </button>
   </nav>
 </div>
 
 <!-- SOS MODAL -->
-<div class="modal-overlay" id="sosModal">
-  <div class="modal sos-modal">
+<div class="modal-overlay" id="sos-modal">
+  <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🆘 Você não está sozinha</div>
-    <div class="modal-body" style="text-align:center;">
-      Respirar fundo. 💜 Estamos aqui com você.<br><br>
-      Se você está passando por um momento muito difícil, o <strong>CVV — Centro de Valorização da Vida</strong> oferece apoio emocional 24 horas por dia, de forma gratuita e sigilosa.
+    <div class="sos-modal-content">
+      <div class="sos-heart">💜</div>
+      <div class="sos-msg">Você não precisa enfrentar isso sozinho</div>
+      <p class="sos-sub">Estamos aqui com você. Se estiver em crise ou precisar de apoio imediato, o CVV está disponível 24 horas por dia, todos os dias.</p>
+      <a href="tel:188" style="text-decoration:none;display:block;">
+        <button class="call-btn">📞 Ligar para o CVV — 188</button>
+      </a>
+      <button class="modal-close" onclick="closeModal('sos-modal')">Fechar</button>
     </div>
-    <div class="cvv-chip">📞 188</div>
-    <div style="font-size:0.8rem;color:var(--text3);text-align:center;font-weight:600;margin-bottom:4px;">Disponível 24h por dia • Gratuito • Sigiloso</div>
-    <button class="btn-call" onclick="callCVV()">📞 Ligar para o 188 agora</button>
-    <button class="modal-close" onclick="closeModal('sosModal')">Fechar — estou bem por enquanto</button>
   </div>
 </div>
 
-<!-- ARTICLE MODAL -->
-<div class="modal-overlay" id="articleModal">
+<!-- EXERCISE MODAL -->
+<div class="modal-overlay" id="ex-modal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="articleModalTitle"></div>
-    <div class="modal-body" id="articleModalBody"></div>
-    <button class="modal-close" onclick="closeModal('articleModal')">Fechar</button>
+    <div id="ex-modal-inner"></div>
+  </div>
+</div>
+
+<!-- LIBRARY MODAL -->
+<div class="modal-overlay" id="lib-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="lib-modal-inner"></div>
   </div>
 </div>
 
 <!-- DAY MODAL -->
-<div class="modal-overlay" id="dayModal">
+<div class="modal-overlay" id="day-modal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title" id="dayModalTitle">Seu dia</div>
-    <div class="day-modal-emoji" id="dayModalEmoji"></div>
-    <div class="day-modal-humor" id="dayModalHumor"></div>
-    <div class="day-modal-date" id="dayModalDate"></div>
-    <button class="modal-close" onclick="closeModal('dayModal')">Fechar</button>
+    <div id="day-modal-inner"></div>
   </div>
 </div>
 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
-// ============ CANVAS BACKGROUND ============
-const canvas = document.getElementById('bgCanvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-
-function createParticle() {
-  return {
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    r: Math.random() * 3 + 1,
-    dx: (Math.random() - 0.5) * 0.4,
-    dy: (Math.random() - 0.5) * 0.4,
-    alpha: Math.random() * 0.4 + 0.1,
-    color: ['#9b7de8','#c4b5f0','#e8b4f8','#c44d8c','#7c5cbf'][Math.floor(Math.random()*5)]
-  };
-}
-
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 55; i++) particles.push(createParticle());
-}
-
-function drawGradient() {
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, '#f0ebff');
-  grad.addColorStop(0.5, '#f8f4ff');
-  grad.addColorStop(1, '#fdeeff');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawGradient();
-  particles.forEach(p => {
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    ctx.fillStyle = p.color + Math.round(p.alpha * 255).toString(16).padStart(2, '0');
-    ctx.fill();
-    p.x += p.dx; p.y += p.dy;
-    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-  });
-  requestAnimationFrame(animateParticles);
-}
-
-resizeCanvas(); initParticles(); animateParticles();
-window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
-
-// ============ DATA ============
-const FRASES = [
-  { text: "Você é mais forte do que pensa, mais amada do que sabe.", author: "— Desconhecida" },
-  { text: "Cuidar de si mesma não é egoísmo. É sobrevivência.", author: "— Audre Lorde" },
-  { text: "Cada respiração é um recomeço.", author: "— Thich Nhat Hanh" },
-  { text: "A calma é uma superpotência.", author: "— Desconhecida" },
-  { text: "Você não precisa ser perfeita para ser incrível.", author: "— Desconhecida" },
-  { text: "Seus sentimentos são válidos. Todos eles.", author: "— Desconhecida" },
-  { text: "Pequenos passos ainda são progresso.", author: "— Desconhecida" },
+// ====== DATA ======
+const QUOTES = [
+  { text: "Você é mais forte do que pensa e mais amado do que imagina.", author: "Autor desconhecido" },
+  { text: "Cada dia é uma nova oportunidade de cuidar de você mesmo.", author: "S.O.S Eficiência" },
+  { text: "A dor que sentes hoje se tornará a força que terás amanhã.", author: "Autor desconhecido" },
+  { text: "Cuide da sua mente como cuida do seu corpo.", author: "S.O.S Eficiência" },
+  { text: "Não existe caminhada sem tropeços. Levante-se e siga.", author: "Provérbio" },
+  { text: "Você merece paz. Você merece alegria. Você merece saúde.", author: "S.O.S Eficiência" },
+  { text: "Respirar fundo é o primeiro passo para recomeçar.", author: "S.O.S Eficiência" },
+  { text: "Pedir ajuda é um ato de coragem, não de fraqueza.", author: "Autor desconhecido" },
+  { text: "Mesmo no escuro, há sempre uma luz esperando por você.", author: "S.O.S Eficiência" },
+  { text: "O presente momento é o único lugar onde a vida acontece.", author: "Eckhart Tolle" },
 ];
 
-const TIPS = [
-  "🧘 Sente o peso do corpo na cadeira ou na cama. Perceba o contato com a superfície e relaxe cada músculo, um por um.",
-  "🌊 Imagine uma onda suave de relaxamento começando pelos pés e subindo até a cabeça, dissolvendo toda tensão.",
-  "🎵 Coloque uma música calma e feche os olhos por 3 minutinhos. Deixe a melodia te abraçar.",
-  "💧 Beba um copo d'água com atenção plena. Sinta a temperatura, o sabor e a sensação de hidratação.",
-  "🌿 Se possível, saia para olhar o céu por alguns minutos. O ar fresco faz maravilhas.",
-  "✍️ Escreva 3 coisas pequenas pelas quais você é grata hoje.",
-  "🐾 Se você tem um pet, passe alguns minutos acariciando-o. Isso libera oxitocina!",
-  "🕯️ Acenda uma vela ou incenso favorito e respire o aroma com atenção.",
-  "📵 Coloque o celular no silencioso por 10 minutos. Você merece essa pausa.",
-  "🤗 Dê um abraço em si mesma. Seriamente. Funciona!",
+const EMOTIONS = [
+  { id: "muito-mal", label: "Muito mal", emoji: "😞", color: "#c23f6a", score: 1 },
+  { id: "triste", label: "Triste", emoji: "😔", color: "#7b72d8", score: 2 },
+  { id: "neutro", label: "Neutro", emoji: "😐", color: "#7a72b0", score: 5 },
+  { id: "ansioso", label: "Ansioso", emoji: "😟", color: "#8a5cff", score: 2 },
+  { id: "com-raiva", label: "Com raiva", emoji: "😡", color: "#e85d4a", score: 2 },
+  { id: "cansado", label: "Cansado", emoji: "😴", color: "#6070c0", score: 3 },
+  { id: "bem", label: "Bem", emoji: "🙂", color: "#4da87a", score: 7 },
+  { id: "muito-bem", label: "Muito bem", emoji: "😄", color: "#27ae60", score: 9 },
 ];
 
-const ARTICLES = [
+const EXERCISES = {
+  ansioso: {
+    label: "😟 Ansiedade",
+    items: [
+      { id: "resp424", icon: "🫁", title: "Respiração 4-2-4", desc: "Técnica comprovada para reduzir ansiedade rapidamente. Inspire, segure e expire no ritmo certo.", type: "breathing", duration: 120 },
+      { id: "grounding", icon: "🌿", title: "Técnica 5-4-3-2-1", desc: "Traga sua mente ao presente reconhecendo 5 coisas que vê, 4 que toca, 3 que ouve, 2 que cheira, 1 que prova.", type: "guided", duration: 180, steps: ["Olhe ao redor e nomeie 5 coisas que você pode VER agora.", "Toque 4 objetos próximos e sinta suas texturas.", "Ouça atentamente. O que você ESCUTA ao redor?", "Identifique 2 cheiros que você percebe.", "Pense em 1 coisa que você pode SENTIR o gosto agora."] },
+      { id: "muscular", icon: "💪", title: "Relaxamento Muscular", desc: "Tensione e relaxe grupos musculares para liberar tensão acumulada no corpo.", type: "guided", duration: 120, steps: ["Feche os punhos com força por 5 segundos. Solte.", "Aperte os ombros em direção às orelhas. Solte.", "Contraia os músculos do abdômen. Solte.", "Aperte as coxas juntas. Solte.", "Aperte os pés no chão. Solte. Respire."] },
+    ]
+  },
+  triste: {
+    label: "😔 Tristeza / Depressão",
+    items: [
+      { id: "gratidao", icon: "🙏", title: "Gratidão Guiada", desc: "Reconecte-se com coisas boas que muitas vezes passam despercebidas no dia a dia.", type: "guided", duration: 120, steps: ["Pense em 1 pessoa que te fez bem recentemente.", "Lembre de 1 momento feliz dos últimos dias.", "Agradeça por 1 coisa simples que você tem hoje.", "Escreva ou guarde esses pensamentos no coração."] },
+      { id: "meta", icon: "🎯", title: "Pequena Meta Diária", desc: "Estabeleça uma meta minúscula para hoje. Qualquer vitória conta.", type: "guided", duration: 90, steps: ["Pense em algo muito pequeno que você pode fazer hoje.", "Pode ser: beber água, dar uma volta, mandar mensagem para alguém.", "Comprometa-se com essa única ação.", "Quando fizer, celebre! Você conseguiu! 🎉"] },
+      { id: "alongamento", icon: "🧘", title: "Alongamento Leve", desc: "Movimento suave para despertar o corpo e liberar endorfinas naturais.", type: "guided", duration: 120, steps: ["De pé, estique os braços para cima. Respire.", "Gire o pescoço suavemente para cada lado.", "Estique os braços à frente, entrelace os dedos.", "Agache levemente e suba lentamente.", "Respire fundo 3 vezes. Sinta o seu corpo."] },
+    ]
+  },
+  "com-raiva": {
+    label: "😡 Raiva",
+    items: [
+      { id: "contagem", icon: "🔢", title: "Contagem Regressiva", desc: "Contar de 10 a 1 ativa o córtex pré-frontal e reduz a resposta emocional imediata.", type: "countdown", duration: 10 },
+      { id: "resp-raiva", icon: "🌬️", title: "Respiração Profunda", desc: "Respirações longas e lentas ativam o sistema nervoso parassimpático, acalmando o corpo.", type: "breathing", duration: 60 },
+      { id: "pausa", icon: "⏸️", title: "Pausa Emocional", desc: "Afaste-se da situação por alguns minutos. Isso não é fraqueza — é sabedoria.", type: "guided", duration: 120, steps: ["Afaste-se fisicamente da situação por 2 minutos.", "Encontre um lugar tranquilo se possível.", "Beba um copo d'água lentamente.", "Pergunte-se: isso ainda vai importar em 1 ano?", "Retorne à situação quando se sentir pronto."] },
+    ]
+  },
+  cansado: {
+    label: "😴 Cansaço Mental",
+    items: [
+      { id: "pausa60", icon: "🧠", title: "Pausa Consciente 60s", desc: "Um minuto de descanso consciente pode restaurar mais energia do que horas de distração.", type: "countdown", duration: 60, label: "Feche os olhos. Respire. Descanse." },
+      { id: "ocular", icon: "👁️", title: "Exercício Ocular", desc: "Olhos cansados afetam todo o corpo. Este exercício alivia a tensão visual rapidamente.", type: "guided", duration: 90, steps: ["Palme os olhos: cubra com as palmas por 10s.", "Olhe para longe (mais de 6m) por 20 segundos.", "Gire os olhos lentamente no sentido horário.", "Gire no sentido anti-horário.", "Pisque 20 vezes rapidamente. Descanse."] },
+    ]
+  },
+  bem: {
+    label: "🙂 Bem / Positivo",
+    items: [
+      { id: "conquistas", icon: "🏆", title: "Registro de Conquistas", desc: "Anote tudo que você conquistou hoje, por menor que seja. Isso reforça hábitos positivos.", type: "guided", duration: 90, steps: ["O que você fez bem hoje?", "Que dificuldade você superou?", "De que forma você cuidou de si mesmo?", "Que pessoa você impactou positivamente?", "Registre no diário! Você está indo muito bem. 🌟"] },
+      { id: "reforco", icon: "✨", title: "Reforço Positivo", desc: "Celebre este momento bom. Momentos positivos merecem atenção e celebração.", type: "guided", duration: 60, steps: ["Respire fundo e sorria — mesmo que pequeno.", "Lembre que dias bons também fazem parte de você.", "Compartilhe sua energia com alguém que precisa.", "Guarde esta sensação. Ela é real e merece ser valorizada."] },
+    ]
+  },
+};
+
+const LIBRARY_ARTICLES = [
   {
-    emoji: '🧠',
-    title: 'O que é ansiedade?',
-    body: `A ansiedade é uma resposta natural do nosso organismo ao perigo ou ao estresse. É o corpo se preparando para agir — o coração acelera, a respiração fica mais rápida, os músculos ficam tensos.\n\nO problema surge quando essa resposta acontece com frequência e intensidade desproporcional às situações do dia a dia. Quando a ansiedade é constante e interfere na vida, pode ser um Transtorno de Ansiedade, que é uma condição de saúde mental tratável.\n\nSintomas comuns:\n• Preocupação excessiva e difícil de controlar\n• Tensão muscular\n• Dificuldade para dormir\n• Irritabilidade\n• Sensação de perigo iminente\n• Aceleração do coração\n\n💜 Lembre-se: sentir ansiedade não é fraqueza. É humano. E tem tratamento.`
+    icon: "😟", title: "O que é ansiedade?",
+    sub: "Entenda os sintomas e como lidar",
+    content: `<p>A <strong>ansiedade</strong> é uma resposta natural do organismo a situações de estresse ou ameaça. Em doses moderadas, ela nos ajuda a ficar alertas e preparados. Porém, quando se torna excessiva, pode prejudicar a qualidade de vida.</p>
+    <br>
+    <p><strong>Sintomas comuns:</strong></p>
+    <p>• Preocupação excessiva e constante<br>• Tensão muscular<br>• Dificuldade para dormir<br>• Coração acelerado<br>• Sensação de que algo ruim vai acontecer</p>
+    <br>
+    <p><strong>O que ajuda:</strong></p>
+    <p>Exercícios de respiração, atividade física regular, reduzir cafeína, manter uma rotina de sono e buscar apoio profissional quando necessário.</p>`
   },
   {
-    emoji: '🌪️',
-    title: 'Crise de ansiedade: o que fazer?',
-    body: `Uma crise de ansiedade pode ser assustadora, mas passa. Aqui estão estratégias para o momento agudo:\n\n🌬️ RESPIRAÇÃO: Inspire por 4 segundos, segure por 2, expire por 4. Repita até sentir alívio.\n\n👁️ TÉCNICA 5-4-3-2-1: Nomeie 5 coisas que você vê, 4 que pode tocar, 3 sons que ouve, 2 cheiros e 1 sabor.\n\n💧 ÁGUA FRIA: Jogue água fria no rosto ou segure um cubo de gelo. Ativa o nervo vago e acalma.\n\n🗣️ NOMEIE: Diga para si mesma "Estou tendo ansiedade. Isso vai passar. Estou segura."\n\n📞 LIGUE: Se sentir que não consegue se controlar, ligue para alguém de confiança ou para o CVV: 188.\n\n⚠️ Se as crises são frequentes, busque apoio profissional.`
+    icon: "😔", title: "Entendendo a depressão",
+    sub: "Mais do que tristeza — é uma doença",
+    content: `<p>A <strong>depressão</strong> é muito mais do que se sentir triste. É uma condição médica que afeta como você pensa, sente e realiza atividades do dia a dia. Ela não é fraqueza nem falta de vontade.</p>
+    <br>
+    <p><strong>Sinais importantes:</strong></p>
+    <p>• Tristeza persistente por mais de 2 semanas<br>• Perda de interesse em atividades prazerosas<br>• Alterações no sono e apetite<br>• Dificuldade de concentração<br>• Pensamentos negativos frequentes</p>
+    <br>
+    <p><strong>Lembre-se:</strong> depressão tem tratamento e você merece receber ajuda. Procure um médico ou psicólogo.</p>`
   },
   {
-    emoji: '🌸',
-    title: 'Autocuidado emocional',
-    body: `Autocuidado emocional não é luxo — é necessidade. São pequenas práticas que, feitas com consistência, transformam como você se sente por dentro.\n\n🌙 SONO: Priorize 7-9 horas de sono. A privação de sono amplifica a ansiedade.\n\n🍃 MOVIMENTO: Caminhadas de 20 minutos já reduzem significativamente o estresse.\n\n📵 PAUSAS DIGITAIS: Estabeleça horários longe das redes sociais.\n\n✍️ DIÁRIO EMOCIONAL: Escrever sobre o que você sente ajuda a processar emoções.\n\n🤝 CONEXÃO: Tempo de qualidade com pessoas queridas é remédio para a alma.\n\n🎨 CRIATIVIDADE: Pintura, música, escrita, dança — qualquer expressão criativa alivia.\n\n💜 Qual dessas práticas você pode começar hoje?`
+    icon: "😡", title: "Como lidar com a raiva",
+    sub: "Técnicas para gerenciar emoções intensas",
+    content: `<p>A <strong>raiva</strong> é uma emoção humana válida. O problema não é sentir raiva, mas como expressamos ela. Quando não gerenciada, pode prejudicar relacionamentos e nossa saúde.</p>
+    <br>
+    <p><strong>Estratégias eficazes:</strong></p>
+    <p>• Faça uma pausa antes de reagir<br>• Respire fundo várias vezes<br>• Conte de 10 a 1 mentalmente<br>• Expresse o que sente com "eu" em vez de "você"<br>• Escreva o que está sentindo</p>
+    <br>
+    <p>A raiva controlada pode se tornar energia para mudanças positivas.</p>`
   },
   {
-    emoji: '🤝',
-    title: 'Quando pedir ajuda profissional?',
-    body: `Pedir ajuda é um ato de coragem e inteligência emocional. Considere buscar apoio profissional quando:\n\n🔴 A ansiedade interfere no trabalho, estudo ou relacionamentos\n🔴 Você evita situações por medo (sair, trabalhar, socializar)\n🔴 Os sintomas físicos são frequentes (tontura, falta de ar, coração acelerado)\n🔴 Você usa álcool ou outras substâncias para aliviar a ansiedade\n🔴 Tem pensamentos de se machucar\n🔴 A qualidade do seu sono está comprometida há semanas\n\nONDE BUSCAR AJUDA:\n• CAPS (Centro de Atenção Psicossocial) — gratuito\n• UBS (Unidade Básica de Saúde)\n• Psicólogos pelo CRPSP (muitos com valores acessíveis)\n• CVV: 188 (apoio emocional 24h)\n\n💜 Você merece se sentir bem. Pedir ajuda é o primeiro passo.`
+    icon: "🌸", title: "Autocuidado emocional",
+    sub: "Pequenas ações com grande impacto",
+    content: `<p>O <strong>autocuidado</strong> não é egoísmo — é necessidade. Cuidar de si mesmo permite que você cuide melhor dos outros também.</p>
+    <br>
+    <p><strong>Práticas simples:</strong></p>
+    <p>• Durma de 7 a 9 horas por noite<br>• Hidrate-se bem durante o dia<br>• Mova-se por pelo menos 20 minutos<br>• Estabeleça limites saudáveis<br>• Reserve tempo para o que te faz feliz<br>• Desconecte-se das redes sociais regularmente</p>
+    <br>
+    <p>Pequenas ações diárias constroem uma base emocional sólida.</p>`
+  },
+  {
+    icon: "🩺", title: "Quando procurar ajuda profissional?",
+    sub: "Reconheça os sinais e não espere mais",
+    content: `<p>Muitas pessoas hesitam em buscar ajuda profissional. Mas existem sinais claros de que é hora de consultar um psicólogo ou psiquiatra:</p>
+    <br>
+    <p>• Sintomas persistem por mais de 2 semanas<br>• Dificuldade para realizar tarefas do cotidiano<br>• Pensamentos de se machucar ou machucar outros<br>• Uso de álcool ou substâncias para aliviar a dor<br>• Isolamento social progressivo<br>• Sensação de que "não tem jeito"</p>
+    <br>
+    <p><strong>Buscar ajuda é o ato mais corajoso que você pode fazer. Você merece cuidado profissional.</strong></p>
+    <br>
+    <p>📞 CVV: 188 (gratuito, 24h)</p>`
+  },
+];
+
+const ACHIEVEMENTS = [
+  { icon: "🌱", name: "Primeiro Passo", desc: "Registrou sua primeira emoção", key: "first_emotion" },
+  { icon: "📖", name: "Escriba", desc: "Fez 3 registros no diário", key: "diary_3" },
+  { icon: "🔥", name: "Semana Perfeita", desc: "7 dias consecutivos de check-in", key: "streak_7" },
+  { icon: "🌬️", name: "Respirador", desc: "Completou 5 exercícios de respiração", key: "breath_5" },
+  { icon: "💜", name: "Cuidador de Si", desc: "Usou o app por 3 dias seguidos", key: "streak_3" },
+  { icon: "🏆", name: "Campeão Emocional", desc: "Registrou 30 emoções", key: "emotion_30" },
+];
+
+// ====== STATE ======
+let currentPage = 'home';
+let currentExTab = 'ansioso';
+let breathTimer = null;
+let breathActive = false;
+let exTimerInterval = null;
+
+// ====== STORAGE ======
+function getData(key, def) {
+  try { return JSON.parse(localStorage.getItem('sos_' + key)) ?? def; } catch { return def; }
+}
+function setData(key, val) {
+  try { localStorage.setItem('sos_' + key, JSON.stringify(val)); } catch {}
+}
+
+// ====== CANVAS PARTICLES ======
+(function() {
+  const canvas = document.getElementById('canvas-bg');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let W, H;
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
   }
-];
 
-const HUMOR_COLORS = {
-  'Muito mal': '#e05fa0',
-  'Pra baixo': '#9b7de8',
-  'Mais ou menos': '#b0b0d8',
-  'Bem': '#7de8b0',
-  'Ótima': '#f4e04f'
-};
+  function createParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      opacity: Math.random() * 0.4 + 0.1,
+      pulse: Math.random() * Math.PI * 2,
+    };
+  }
 
-const HUMOR_EMOJIS = {
-  'Muito mal': '😰',
-  'Pra baixo': '😔',
-  'Mais ou menos': '😐',
-  'Bem': '😊',
-  'Ótima': '🤩'
-};
+  function init() {
+    resize();
+    particles = Array.from({ length: 60 }, createParticle);
+  }
 
-// ============ STATE ============
-let currentPage = 'inicio';
-let breathRunning = false;
-let breathInterval = null;
-let breathPhaseIdx = 0;
-let breathCounter = 0;
-const BREATH_PHASES = [
-  { name: 'Inspire', label: 'Encha os pulmões', duration: 4, class: 'inhale' },
-  { name: 'Segure', label: 'Sinta o ar', duration: 2, class: 'hold' },
-  { name: 'Expire', label: 'Solte tudo...', duration: 4, class: 'exhale' }
-];
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() / 1000;
 
-// ============ NAVIGATION ============
-function goTo(page) {
+    particles.forEach(p => {
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+
+      const op = p.opacity * (0.7 + 0.3 * Math.sin(t + p.pulse));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(111, 107, 216, ${op})`;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  init(); draw();
+})();
+
+// ====== NAVIGATION ======
+function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
+  document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
   currentPage = page;
-  if (page === 'inicio') renderWeek();
-  if (page === 'diario') renderDiaryHistory();
-  if (page === 'eu') renderStats();
-  if (page === 'exercicios') newTip();
+
+  if (page === 'home') renderHome();
+  if (page === 'diary') renderDiary();
+  if (page === 'exercises') renderExercises();
+  if (page === 'library') renderLibrary();
+  if (page === 'profile') renderProfile();
 }
 
-// ============ MODALS ============
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// ====== TOAST ======
+function showToast(msg, duration = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
 
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+// ====== MODALS ======
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  if (id === 'ex-modal') stopBreathing();
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) closeModal(this.id);
+  });
 });
 
-// ============ FRASES ============
-function loadFrase() {
-  const idx = Math.floor(Date.now() / 86400000) % FRASES.length;
-  document.getElementById('fraseText').textContent = FRASES[idx].text;
-  document.getElementById('fraseAuthor').textContent = FRASES[idx].author;
+function openSOS() { openModal('sos-modal'); }
+
+// ====== QUOTE ======
+function renderQuote() {
+  const idx = getData('quote_idx', 0);
+  const q = QUOTES[idx % QUOTES.length];
+  document.getElementById('quote-text').textContent = q.text;
+  document.getElementById('quote-author').textContent = '— ' + q.author;
+  setData('quote_idx', (idx + 1) % QUOTES.length);
 }
 
-// ============ HUMOR ============
-function saveHumor(label, emoji) {
-  const record = { label, emoji, ts: new Date().toISOString() };
-  let history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
-  history.unshift(record);
-  if (history.length > 60) history = history.slice(0, 60);
-  localStorage.setItem('sos_humor_history', JSON.stringify(history));
-  localStorage.setItem('sos_last_humor', JSON.stringify(record));
-  updateHumorButtons(label);
-  showLastHumor(record);
-  renderWeek();
-}
+// ====== EMOTIONS ======
+function renderEmotions() {
+  const grid = document.getElementById('emotion-grid');
+  grid.innerHTML = '';
+  const today = getTodayKey();
+  const todayEmotion = getData('day_' + today, null);
 
-function updateHumorButtons(selected) {
-  document.querySelectorAll('.humor-btn').forEach(btn => {
-    btn.classList.toggle('selected', btn.dataset.key === selected);
+  EMOTIONS.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emotion-btn' + (todayEmotion?.id === em.id ? ' selected' : '');
+    btn.innerHTML = `<span class="em">${em.emoji}</span>${em.label}`;
+    btn.onclick = () => selectEmotion(em);
+    grid.appendChild(btn);
   });
 }
 
-function showLastHumor(record) {
-  const el = document.getElementById('lastHumorDisplay');
-  el.style.display = 'flex';
-  document.getElementById('lastHumorEmoji').textContent = record.emoji;
-  document.getElementById('lastHumorLabel').textContent = 'Sentindo-se: ' + record.label;
-  document.getElementById('lastHumorDate').textContent = formatDate(record.ts);
-}
+function selectEmotion(em) {
+  const today = getTodayKey();
+  const prev = getData('day_' + today, null);
+  setData('day_' + today, { id: em.id, emoji: em.emoji, label: em.label, score: em.score, ts: Date.now() });
 
-function loadLastHumor() {
-  const last = localStorage.getItem('sos_last_humor');
-  if (last) {
-    const r = JSON.parse(last);
-    showLastHumor(r);
-    updateHumorButtons(r.label);
+  // Track history
+  let history = getData('emotion_history', []);
+  history.push({ date: today, id: em.id, emoji: em.emoji, label: em.label, score: em.score, ts: Date.now() });
+  setData('emotion_history', history);
+
+  // Check achievements
+  checkAchievement('first_emotion');
+  if (history.length >= 30) checkAchievement('emotion_30');
+
+  // Check streak
+  updateStreak();
+  renderEmotions();
+  renderWeekChart();
+  checkCrisis();
+
+  showToast(em.emoji + ' ' + em.label + ' registrado!');
+
+  // Suggest exercise
+  const map = { 'ansioso': 'ansioso', 'muito-mal': 'triste', 'triste': 'triste', 'com-raiva': 'com-raiva', 'cansado': 'cansado' };
+  if (map[em.id]) {
+    setTimeout(() => {
+      showToast('💡 Exercícios recomendados para você!', 3000);
+      setTimeout(() => { navTo('exercises'); currentExTab = map[em.id]; renderExercises(); }, 1200);
+    }, 800);
   }
 }
 
-// ============ WEEK ============
-function renderWeek() {
-  const grid = document.getElementById('weekGrid');
-  const labels = document.getElementById('weekLabels');
-  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
+function getTodayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+// ====== WEEK CHART ======
+function renderWeekChart() {
+  const chart = document.getElementById('week-chart');
+  chart.innerHTML = '';
   const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  const weekData = [];
 
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const key = d.toDateString();
-    const dayRecords = history.filter(h => new Date(h.ts).toDateString() === key);
-    weekData.push({ date: d, record: dayRecords[0] || null, label: days[d.getDay()] });
-  }
-
-  grid.innerHTML = '';
-  labels.innerHTML = '';
-
-  const humorHeights = { 'Muito mal': 20, 'Pra baixo': 35, 'Mais ou menos': 50, 'Bem': 65, 'Ótima': 80 };
-
-  weekData.forEach((day, i) => {
-    const h = day.record ? (humorHeights[day.record.label] || 30) : 8;
-    const color = day.record ? (HUMOR_COLORS[day.record.label] || '#ccc') : '#e0d8f5';
-    const isToday = i === 6;
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    const data = getData('day_' + key, null);
+    const dayName = days[d.getDay()];
+    const score = data ? data.score : 0;
+    const pct = Math.max(4, (score / 10) * 100);
 
     const wrap = document.createElement('div');
-    wrap.className = 'week-bar-wrap';
-    wrap.onclick = () => openDayModal(day);
+    wrap.className = 'day-bar-wrap';
+    wrap.onclick = () => openDayModal(key, data, dayName, d);
 
     const bar = document.createElement('div');
-    bar.className = 'week-bar';
-    bar.style.cssText = `height:${h}px;background:${color};${isToday?'box-shadow:0 0 8px '+color+'88;':''}`;
+    bar.className = 'day-bar' + (data ? ' filled' : '');
+    bar.style.height = pct + '%';
+
+    const label = document.createElement('div');
+    label.className = 'day-label';
+    label.textContent = data ? data.emoji : dayName.charAt(0);
 
     wrap.appendChild(bar);
-    grid.appendChild(wrap);
-
-    const lbl = document.createElement('div');
-    lbl.className = 'week-day-label';
-    lbl.textContent = day.label;
-    if (isToday) lbl.style.color = 'var(--primary)';
-    labels.appendChild(lbl);
-  });
+    wrap.appendChild(label);
+    chart.appendChild(wrap);
+  }
 }
 
-function openDayModal(day) {
-  document.getElementById('dayModalTitle').textContent = 'Sua semana 📊';
-  if (day.record) {
-    document.getElementById('dayModalEmoji').textContent = day.record.emoji;
-    document.getElementById('dayModalHumor').textContent = day.record.label;
-    document.getElementById('dayModalDate').textContent = formatDate(day.record.ts);
+function openDayModal(key, data, dayName, d) {
+  const inner = document.getElementById('day-modal-inner');
+  const dateStr = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+  inner.innerHTML = `
+    <div class="modal-title">${dateStr}</div>
+    ${data ? `
+      <div style="text-align:center;font-size:3rem;margin:12px 0">${data.emoji}</div>
+      <p style="text-align:center;font-size:1rem;color:var(--text2);margin-bottom:12px">${data.label}</p>
+      <div class="info-badge">Você registrou <strong>${data.label}</strong> neste dia.</div>
+    ` : `<p style="color:var(--text3);text-align:center;padding:20px 0">Nenhum registro neste dia.</p>`}
+    <button class="modal-close" onclick="closeModal('day-modal')">Fechar</button>
+  `;
+  openModal('day-modal');
+}
+
+// ====== HOME ======
+function renderHome() {
+  renderQuote();
+  renderEmotions();
+  renderWeekChart();
+  checkCrisis();
+  updateStreakDisplay();
+}
+
+// ====== CRISIS CHECK ======
+function checkCrisis() {
+  const history = getData('emotion_history', []);
+  const recent = history.slice(-3);
+  const negIds = ['muito-mal', 'triste', 'ansioso', 'com-raiva'];
+  const allNeg = recent.length >= 3 && recent.every(e => negIds.includes(e.id));
+  const banner = document.getElementById('crisis-banner');
+  const sosBtn = document.getElementById('sos-btn');
+  if (allNeg) {
+    banner.classList.add('show');
+    sosBtn.classList.add('crisis');
   } else {
-    document.getElementById('dayModalEmoji').textContent = '🌱';
-    document.getElementById('dayModalHumor').textContent = 'Nenhum humor registrado';
-    document.getElementById('dayModalDate').textContent = day.date.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
-  }
-  openModal('dayModal');
-}
-
-// ============ DIARY ============
-function saveDiary() {
-  const text = document.getElementById('diaryText').value.trim();
-  if (!text) { alert('Escreva algo antes de salvar! 💜'); return; }
-  const entry = { text, ts: new Date().toISOString() };
-  localStorage.setItem('sos_diary', JSON.stringify(entry));
-  document.getElementById('diaryMeta').textContent = '✅ Salvo em ' + formatDate(entry.ts);
-}
-
-function clearDiary() {
-  if (confirm('Limpar o diário atual?')) {
-    document.getElementById('diaryText').value = '';
-    document.getElementById('diaryMeta').textContent = '';
+    banner.classList.remove('show');
+    sosBtn.classList.remove('crisis');
   }
 }
 
-function loadDiary() {
-  const saved = localStorage.getItem('sos_diary');
-  if (saved) {
-    const entry = JSON.parse(saved);
-    document.getElementById('diaryText').value = entry.text;
-    document.getElementById('diaryMeta').textContent = 'Última atualização: ' + formatDate(entry.ts);
+// ====== STREAK ======
+function updateStreak() {
+  let streak = getData('streak', { count: 0, lastDate: null });
+  const today = getTodayKey();
+  const yesterday = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; })();
+
+  if (streak.lastDate === today) return;
+  if (streak.lastDate === yesterday) {
+    streak.count++;
+  } else if (streak.lastDate !== today) {
+    streak.count = 1;
+  }
+  streak.lastDate = today;
+  setData('streak', streak);
+
+  if (streak.count >= 3) checkAchievement('streak_3');
+  if (streak.count >= 7) checkAchievement('streak_7');
+  updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+  const streak = getData('streak', { count: 0 });
+  document.getElementById('streak-count').textContent = streak.count || 0;
+}
+
+// ====== ACHIEVEMENTS ======
+function checkAchievement(key) {
+  let unlocked = getData('achievements', []);
+  if (!unlocked.includes(key)) {
+    unlocked.push(key);
+    setData('achievements', unlocked);
+    const ach = ACHIEVEMENTS.find(a => a.key === key);
+    if (ach) showToast('🏆 Conquista: ' + ach.name + '!', 3000);
   }
 }
 
-function renderDiaryHistory() {
-  const container = document.getElementById('humorHistory');
-  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
-  if (!history.length) {
-    container.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;font-weight:600;text-align:center;padding:16px 0;">Nenhum humor registrado ainda 🌱</div>';
+// ====== DIARY ======
+function renderDiary() {
+  const list = document.getElementById('diary-list');
+  const entries = getData('diary', []);
+  if (!entries.length) {
+    list.innerHTML = `<p style="color:var(--text3);text-align:center;padding:20px 0">Nenhum registro ainda.<br>Escreva algo sobre como está se sentindo.</p>`;
     return;
   }
-  container.innerHTML = history.slice(0, 20).map(h => `
-    <div class="humor-history-item">
-      <span class="hi-emoji">${h.emoji}</span>
-      <span>${h.label}</span>
-      <span class="hi-date">${formatDate(h.ts)}</span>
+  list.innerHTML = entries.slice().reverse().map((e, i) => {
+    const realIdx = entries.length - 1 - i;
+    return `
+    <div class="diary-entry">
+      <div class="entry-meta">
+        <span class="entry-date">📅 ${e.date}</span>
+        <div class="entry-actions">
+          <button class="entry-action" onclick="deleteDiary(${realIdx})">🗑️ Excluir</button>
+        </div>
+      </div>
+      <p class="entry-text">${e.text.replace(/\n/g, '<br>')}</p>
+    </div>`;
+  }).join('');
+}
+
+function saveDiary() {
+  const input = document.getElementById('diary-input');
+  const text = input.value.trim();
+  if (!text) { showToast('Escreva algo antes de salvar 📝'); return; }
+
+  const entries = getData('diary', []);
+  const now = new Date();
+  entries.push({
+    text,
+    date: now.toLocaleString('pt-BR'),
+    ts: Date.now()
+  });
+  setData('diary', entries);
+  input.value = '';
+  renderDiary();
+  showToast('✅ Registro salvo!');
+
+  if (entries.length >= 3) checkAchievement('diary_3');
+}
+
+function deleteDiary(idx) {
+  const entries = getData('diary', []);
+  entries.splice(idx, 1);
+  setData('diary', entries);
+  renderDiary();
+  showToast('🗑️ Removido');
+}
+
+// ====== EXERCISES ======
+function renderExercises() {
+  const tabs = document.getElementById('exercise-tabs');
+  const list = document.getElementById('exercise-list');
+
+  tabs.innerHTML = Object.entries(EXERCISES).map(([key, val]) =>
+    `<button class="ex-tab ${currentExTab === key ? 'active' : ''}" onclick="setExTab('${key}')">${val.label}</button>`
+  ).join('');
+
+  const cat = EXERCISES[currentExTab];
+  list.innerHTML = cat.items.map(ex => `
+    <div class="exercise-card fade-up">
+      <div class="ex-header">
+        <span class="ex-title">${ex.title}</span>
+        <span class="ex-icon">${ex.icon}</span>
+      </div>
+      <p class="ex-desc">${ex.desc}</p>
+      <button class="ex-start-btn" onclick="openExercise('${ex.id}')">▶️ Começar</button>
     </div>
   `).join('');
 }
 
-// ============ BREATH ============
-function toggleBreath() {
-  if (breathRunning) { stopBreath(); } else { startBreath(); }
+function setExTab(key) {
+  currentExTab = key;
+  renderExercises();
 }
 
-function startBreath() {
-  breathRunning = true;
-  breathPhaseIdx = 0;
-  document.getElementById('breathStartBtn').textContent = '⏹ Parar';
-  runBreathPhase();
+function openExercise(exId) {
+  const allEx = Object.values(EXERCISES).flatMap(c => c.items);
+  const ex = allEx.find(e => e.id === exId);
+  if (!ex) return;
+
+  const inner = document.getElementById('ex-modal-inner');
+
+  if (ex.type === 'breathing') {
+    inner.innerHTML = buildBreathingUI(ex);
+    openModal('ex-modal');
+    return;
+  }
+
+  if (ex.type === 'countdown') {
+    inner.innerHTML = buildCountdownUI(ex);
+    openModal('ex-modal');
+    return;
+  }
+
+  if (ex.type === 'guided') {
+    inner.innerHTML = buildGuidedUI(ex);
+    openModal('ex-modal');
+    return;
+  }
 }
 
-function stopBreath() {
-  breathRunning = false;
-  clearTimeout(breathInterval);
-  const circle = document.getElementById('breathCircle');
-  circle.className = 'breath-circle';
-  document.getElementById('breathPhase').textContent = 'Pronta?';
-  document.getElementById('breathTimer').textContent = '—';
-  document.getElementById('breathLabel').textContent = 'Toque em Começar';
-  document.getElementById('breathStartBtn').textContent = '▶️ Começar';
+// ====== BREATHING ======
+function buildBreathingUI(ex) {
+  return `
+    <div class="modal-title">${ex.icon} ${ex.title}</div>
+    <p class="modal-body" style="margin-bottom:16px">${ex.desc}</p>
+    <div class="breath-container">
+      <div class="breath-circle-wrap">
+        <div class="breath-ring" id="breath-ring"></div>
+        <div class="breath-core" id="breath-core">
+          <div class="breath-text-inner" id="breath-inner">Pronto</div>
+        </div>
+      </div>
+      <div class="breath-count" id="breath-count"></div>
+      <div class="breath-phase" id="breath-phase">Pressione Começar</div>
+      <div class="breath-controls">
+        <button class="ctrl-btn primary" id="breath-start-btn" onclick="startBreathing()">▶️ Começar</button>
+        <button class="ctrl-btn" onclick="stopBreathing()">⏹️ Parar</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal('ex-modal')">Fechar</button>
+  `;
 }
 
-function runBreathPhase() {
-  if (!breathRunning) return;
-  const phase = BREATH_PHASES[breathPhaseIdx % 3];
-  const circle = document.getElementById('breathCircle');
-  circle.className = 'breath-circle ' + phase.class;
-  document.getElementById('breathPhase').textContent = phase.name;
-  document.getElementById('breathLabel').textContent = phase.label;
-  let secs = phase.duration;
-  document.getElementById('breathTimer').textContent = secs;
-  const tick = setInterval(() => {
-    secs--;
-    document.getElementById('breathTimer').textContent = secs;
-    if (secs <= 0) {
-      clearInterval(tick);
-      if (breathRunning) {
-        breathPhaseIdx++;
-        setTimeout(runBreathPhase, 200);
-      }
+function startBreathing() {
+  if (breathActive) return;
+  breathActive = true;
+  document.getElementById('breath-start-btn').disabled = true;
+
+  // Track achievement
+  let bc = getData('breath_count', 0) + 1;
+  setData('breath_count', bc);
+  if (bc >= 5) checkAchievement('breath_5');
+
+  const phases = [
+    { text: 'Inspire', duration: 4000, anim: 'breathe-in' },
+    { text: 'Segure', duration: 2000, anim: 'breathe-hold' },
+    { text: 'Expire', duration: 4000, anim: 'breathe-out' },
+  ];
+
+  let phaseIdx = 0;
+  let countdown = 0;
+  let countInterval;
+
+  function runPhase() {
+    if (!breathActive) return;
+    const phase = phases[phaseIdx % phases.length];
+    const core = document.getElementById('breath-core');
+    const phaseEl = document.getElementById('breath-phase');
+    const countEl = document.getElementById('breath-count');
+    const innerEl = document.getElementById('breath-inner');
+
+    if (!core) { breathActive = false; return; }
+
+    phaseEl.textContent = phase.text;
+    innerEl.textContent = phase.text;
+    core.style.animation = `${phase.anim} ${phase.duration}ms ease-in-out both`;
+
+    clearInterval(countInterval);
+    countdown = phase.duration / 1000;
+    countEl.textContent = countdown;
+
+    countInterval = setInterval(() => {
+      countdown--;
+      if (countEl) countEl.textContent = countdown > 0 ? countdown : '';
+    }, 1000);
+
+    phaseIdx++;
+    breathTimer = setTimeout(runPhase, phase.duration);
+  }
+
+  runPhase();
+}
+
+function stopBreathing() {
+  breathActive = false;
+  clearTimeout(breathTimer);
+  const core = document.getElementById('breath-core');
+  const phaseEl = document.getElementById('breath-phase');
+  const countEl = document.getElementById('breath-count');
+  const startBtn = document.getElementById('breath-start-btn');
+  if (core) { core.style.animation = 'none'; }
+  if (phaseEl) phaseEl.textContent = 'Pausado';
+  if (countEl) countEl.textContent = '';
+  if (startBtn) { startBtn.disabled = false; }
+}
+
+// ====== COUNTDOWN ======
+let countdownInterval = null;
+
+function buildCountdownUI(ex) {
+  return `
+    <div class="modal-title">${ex.icon} ${ex.title}</div>
+    <p class="modal-body" style="margin-bottom:16px">${ex.desc}</p>
+    <div class="ex-modal-timer">
+      <div class="ex-timer-display" id="ex-timer">${ex.duration}</div>
+      <div class="ex-timer-label">${ex.label || 'segundos'}</div>
+      <div class="breath-controls" style="margin-top:20px;">
+        <button class="ctrl-btn primary" onclick="startCountdown(${ex.duration})">▶️ Começar</button>
+        <button class="ctrl-btn" onclick="stopCountdown(${ex.duration})">↺ Reiniciar</button>
+      </div>
+    </div>
+    <button class="modal-close" onclick="closeModal('ex-modal')">Fechar</button>
+  `;
+}
+
+function startCountdown(total) {
+  clearInterval(countdownInterval);
+  let t = total;
+  const el = document.getElementById('ex-timer');
+  if (el) el.textContent = t;
+
+  countdownInterval = setInterval(() => {
+    t--;
+    const el2 = document.getElementById('ex-timer');
+    if (el2) el2.textContent = t;
+    if (t <= 0) {
+      clearInterval(countdownInterval);
+      if (el2) el2.textContent = '✅';
+      showToast('🎉 Exercício concluído!');
     }
   }, 1000);
 }
 
-// ============ TIPS ============
-function newTip() {
-  const idx = Math.floor(Math.random() * TIPS.length);
-  document.getElementById('tipText').textContent = TIPS[idx];
+function stopCountdown(total) {
+  clearInterval(countdownInterval);
+  const el = document.getElementById('ex-timer');
+  if (el) el.textContent = total;
 }
 
-// ============ ARTICLES ============
-function openArticle(idx) {
-  const a = ARTICLES[idx];
-  document.getElementById('articleModalTitle').textContent = a.emoji + ' ' + a.title;
-  document.getElementById('articleModalBody').innerHTML = a.body.replace(/\n/g, '<br>');
-  openModal('articleModal');
-}
-
-// ============ EU ============
-function renderStats() {
-  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
-  const diary = localStorage.getItem('sos_diary');
-  const el = document.getElementById('statsDisplay');
-  el.innerHTML = `
-    <div>📊 Humores registrados: <strong>${history.length}</strong></div>
-    <div>📖 Diário: <strong>${diary ? '✅ Com conteúdo' : '📭 Vazio'}</strong></div>
-    <div>📅 Primeiro registro: <strong>${history.length ? formatDate(history[history.length-1].ts) : '—'}</strong></div>
+// ====== GUIDED ======
+function buildGuidedUI(ex) {
+  const steps = ex.steps || [];
+  return `
+    <div class="modal-title">${ex.icon} ${ex.title}</div>
+    <p class="modal-body" style="margin-bottom:16px">${ex.desc}</p>
+    <div id="guided-steps">
+      ${steps.map((step, i) => `
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border)">
+          <div style="width:24px;height:24px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${i+1}</div>
+          <p style="font-size:0.85rem;color:var(--text2);line-height:1.6">${step}</p>
+        </div>
+      `).join('')}
+    </div>
+    <button class="ctrl-btn primary" style="width:100%;margin-top:16px" onclick="showToast('🎉 Exercício concluído!')">✅ Concluído!</button>
+    <button class="modal-close" onclick="closeModal('ex-modal')">Fechar</button>
   `;
+}
+
+// ====== LIBRARY ======
+function renderLibrary() {
+  const list = document.getElementById('library-list');
+  list.innerHTML = LIBRARY_ARTICLES.map((art, i) => `
+    <div class="lib-card" onclick="openArticle(${i})">
+      <div class="lib-info">
+        <span class="lib-icon">${art.icon}</span>
+        <div>
+          <div class="lib-title">${art.title}</div>
+          <div class="lib-sub">${art.sub}</div>
+        </div>
+      </div>
+      <span class="lib-arrow">›</span>
+    </div>
+  `).join('');
+}
+
+function openArticle(idx) {
+  const art = LIBRARY_ARTICLES[idx];
+  document.getElementById('lib-modal-inner').innerHTML = `
+    <div class="modal-title">${art.icon} ${art.title}</div>
+    <div class="modal-body">${art.content}</div>
+    <button class="modal-close" onclick="closeModal('lib-modal')">Fechar</button>
+  `;
+  openModal('lib-modal');
+}
+
+// ====== PROFILE ======
+function renderProfile() {
+  const history = getData('emotion_history', []);
+  const diary = getData('diary', []);
+  const streak = getData('streak', { count: 0 });
+  const breathCount = getData('breath_count', 0);
+
+  document.getElementById('stat-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">${history.length}</div>
+      <div class="stat-label">Check-ins</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${streak.count || 0}</div>
+      <div class="stat-label">Dias seguidos</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${diary.length}</div>
+      <div class="stat-label">Diário</div>
+    </div>
+  `;
+
+  const unlocked = getData('achievements', []);
+  document.getElementById('achievements-list').innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="achievement-row">
+      <span class="ach-icon">${a.icon}</span>
+      <div class="ach-info">
+        <div class="ach-name" style="${!unlocked.includes(a.key) ? 'color:var(--text3)' : ''}">${a.name}</div>
+        <div class="ach-desc">${a.desc}</div>
+      </div>
+      <div class="ach-badge ${unlocked.includes(a.key) ? 'unlocked' : ''}">${unlocked.includes(a.key) ? '✓' : '🔒'}</div>
+    </div>
+  `).join('');
 }
 
 function exportData() {
   const data = {
-    humor_history: JSON.parse(localStorage.getItem('sos_humor_history') || '[]'),
-    diary: JSON.parse(localStorage.getItem('sos_diary') || 'null'),
-    exported_at: new Date().toISOString()
+    exported: new Date().toISOString(),
+    emotion_history: getData('emotion_history', []),
+    diary: getData('diary', []),
+    streak: getData('streak', {}),
+    achievements: getData('achievements', []),
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'sos-eficiencia-dados.json'; a.click();
-  URL.revokeObjectURL(url);
+  a.href = url; a.download = 'sos-eficiencia-dados.json';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('📤 Dados exportados!');
 }
 
-function confirmReset() {
-  if (confirm('⚠️ Tem certeza? Todos os dados serão apagados permanentemente.')) {
-    localStorage.removeItem('sos_humor_history');
-    localStorage.removeItem('sos_last_humor');
-    localStorage.removeItem('sos_diary');
-    alert('✅ Dados resetados. Que começo novo 🌱');
-    location.reload();
-  }
+function resetData() {
+  if (!confirm('Tem certeza? Todos os seus dados serão apagados permanentemente.')) return;
+  ['emotion_history','diary','streak','achievements','breath_count','quote_idx'].forEach(k => {
+    localStorage.removeItem('sos_' + k);
+  });
+  Object.keys(localStorage).filter(k => k.startsWith('sos_day_')).forEach(k => localStorage.removeItem(k));
+  showToast('🗑️ Dados resetados');
+  renderProfile();
 }
 
-// ============ SOS ============
-function callCVV() { window.location.href = 'tel:188'; }
-
-// ============ UTILS ============
-function formatDate(ts) {
-  const d = new Date(ts);
-  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) +
-    ' às ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+// ====== INIT ======
+function init() {
+  updateStreak();
+  renderHome();
 }
 
-// ============ INIT ============
-loadFrase();
-loadLastHumor();
-renderWeek();
-loadDiary();
-newTip();
+init();
 </script>
 </body>
 </html>
