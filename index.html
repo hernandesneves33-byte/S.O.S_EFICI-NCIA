@@ -1,788 +1,1370 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>S.O.S Eficiência 💜 | Projeto Desafio Liga Jovem</title>  <style>
-    :root{
-      --bg:#f6f3ff;
-      --card:#ffffff;
-      --primary:#6f6bd8;
-      --primary2:#8a5cff;
-      --text:#1f1f29;
-      --muted:#6b6b7a;
-      --border:#e9e6ff;
-      --shadow: 0 12px 30px rgba(30, 20, 70, 0.10);
-      --radius:22px;
-    }
-
-    *{box-sizing:border-box; margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
-
-    body{
-      background: linear-gradient(180deg, #f9f7ff 0%, #f0ecff 100%);
-      color:var(--text);
-      min-height:100vh;
-      overflow-x:hidden;
-    }
-
-    /* FUNDO ANIMADO */
-    #bgCanvas{
-      position:fixed;
-      inset:0;
-      z-index:-2;
-    }
-
-    .overlay{
-      position:fixed;
-      inset:0;
-      background: radial-gradient(circle at top, rgba(140, 92, 255, 0.10), transparent 60%),
-                  radial-gradient(circle at bottom, rgba(111, 107, 216, 0.12), transparent 55%);
-      z-index:-1;
-      pointer-events:none;
-    }
-
-    header{
-      padding: 28px 18px 18px;
-      max-width:1100px;
-      margin:auto;
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-
-    .logo{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-
-    .logo h1{
-      font-size:28px;
-      font-weight:900;
-      letter-spacing:-0.5px;
-    }
-
-    .logo p{
-      font-size:14px;
-      color:var(--muted);
-      font-weight:600;
-    }
-
-    .sos-btn{
-      border:none;
-      background: #fff;
-      border:1px solid var(--border);
-      padding:10px 16px;
-      border-radius:999px;
-      font-weight:900;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-      transition:0.2s;
-    }
-
-    .sos-btn:hover{transform:translateY(-1px);}
-
-    .container{
-      max-width:1100px;
-      margin:auto;
-      padding: 0 18px 120px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-
-    .banner{
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
-      color:white;
-      padding: 26px 22px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .banner::after{
-      content:"";
-      position:absolute;
-      right:-80px;
-      top:-80px;
-      width:200px;
-      height:200px;
-      border-radius:50%;
-      background: rgba(255,255,255,0.18);
-    }
-
-    .banner small{
-      font-weight:900;
-      opacity:0.9;
-      letter-spacing:1px;
-    }
-
-    .banner h2{
-      margin-top:10px;
-      font-size:22px;
-      font-weight:900;
-      max-width:560px;
-      line-height:1.2;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:18px;
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 10px 24px rgba(30, 20, 70, 0.06);
-      backdrop-filter: blur(6px);
-    }
-
-    .card h3{
-      font-size:18px;
-      font-weight:900;
-      margin-bottom:6px;
-    }
-
-    .card p{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.45;
-    }
-
-    .mood{
-      display:flex;
-      gap:10px;
-      margin-top:14px;
-      flex-wrap:wrap;
-    }
-
-    .mood button{
-      flex:1;
-      min-width:110px;
-      border:1px solid var(--border);
-      background:#faf9ff;
-      border-radius:16px;
-      padding:10px 10px;
-      cursor:pointer;
-      transition:0.2s;
-      font-weight:900;
-      font-size:13px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-
-    .mood button:hover{
-      transform: translateY(-2px);
-      border-color:#c9c4ff;
-    }
-
-    .mood button.active{
-      border-color: #8a5cff;
-      background: #f0ebff;
-    }
-
-    .week{
-      margin-top:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap:12px;
-    }
-
-    .bars{
-      display:flex;
-      gap:12px;
-      align-items:flex-end;
-    }
-
-    .bar{
-      width:12px;
-      height:70px;
-      background:#f2efff;
-      border-radius:999px;
-      position:relative;
-      overflow:hidden;
-      border:1px solid #ebe7ff;
-    }
-
-    .bar .fill{
-      position:absolute;
-      bottom:0;
-      width:100%;
-      height:30%;
-      background: linear-gradient(180deg, #57d4a0 0%, #2fb57e 100%);
-      border-radius:999px;
-      transition:0.35s;
-    }
-
-    .days{
-      display:flex;
-      gap:14px;
-      align-items:flex-end;
-      margin-top:10px;
-    }
-
-    .days span{
-      font-size:12px;
-      color:#888;
-      font-weight:900;
-      width:12px;
-      text-align:center;
-    }
-
-    .shortcuts{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:18px;
-      margin-top:14px;
-    }
-
-    .shortcut{
-      padding:16px;
-      border-radius:20px;
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, #ffffff 0%, #f7f6ff 100%);
-      cursor:pointer;
-      transition:0.2s;
-    }
-
-    .shortcut:hover{transform:translateY(-2px);}
-
-    .shortcut .icon{
-      width:42px;
-      height:42px;
-      border-radius:16px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:20px;
-      font-weight:900;
-      background:#ece9ff;
-      color:#4c47c9;
-      margin-bottom:10px;
-    }
-
-    .shortcut h4{
-      font-size:16px;
-      font-weight:900;
-      margin-bottom:2px;
-    }
-
-    .shortcut p{
-      font-size:13px;
-      color:var(--muted);
-    }
-
-    .page{display:none;}
-    .page.active{display:block; animation:fadeIn 0.2s ease;}
-
-    @keyframes fadeIn{
-      from{opacity:0; transform:translateY(8px);} 
-      to{opacity:1; transform:translateY(0);} 
-    }
-
-    footer{
-      position:fixed;
-      bottom:0;
-      left:0;
-      right:0;
-      background:rgba(255,255,255,0.85);
-      border-top:1px solid var(--border);
-      padding:12px 10px;
-      display:flex;
-      justify-content:space-around;
-      z-index:10;
-      backdrop-filter: blur(10px);
-    }
-
-    footer button{
-      border:none;
-      background:transparent;
-      color:#6c6c7c;
-      font-weight:900;
-      font-size:12px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:6px;
-      cursor:pointer;
-    }
-
-    footer button.active{color:var(--primary2);}
-
-    .dot{
-      width:8px;
-      height:8px;
-      border-radius:50%;
-      background:transparent;
-    }
-
-    footer button.active .dot{background:var(--primary2);}
-
-    .modal{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,0.35);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:999;
-    }
-
-    .modal.active{display:flex;}
-
-    .modal-box{
-      background:#fff;
-      border-radius:22px;
-      padding:18px;
-      width:100%;
-      max-width:520px;
-      box-shadow: var(--shadow);
-      border:1px solid var(--border);
-    }
-
-    .modal-box h3{
-      font-size:18px;
-      font-weight:900;
-      margin-bottom:8px;
-    }
-
-    .modal-box p{
-      font-size:14px;
-      color:var(--muted);
-      line-height:1.4;
-    }
-
-    .modal-actions{
-      display:flex;
-      gap:10px;
-      margin-top:14px;
-      flex-wrap:wrap;
-    }
-
-    .modal-actions button{
-      flex:1;
-      border:none;
-      padding:12px;
-      border-radius:16px;
-      font-weight:900;
-      cursor:pointer;
-      min-width:140px;
-    }
-
-    .btn-primary{background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%); color:#fff;}
-    .btn-outline{background:#f7f6ff; color:#4b47c8; border:1px solid var(--border);}
-
-    textarea{
-      width:100%;
-      min-height:160px;
-      padding:12px;
-      border-radius:16px;
-      border:1px solid var(--border);
-      outline:none;
-      font-size:14px;
-      resize:none;
-      margin-top:10px;
-      background:#fbfaff;
-      font-weight:600;
-    }
-
-    .row{
-      display:flex;
-      gap:12px;
-      margin-top:12px;
-      flex-wrap:wrap;
-    }
-
-    .row button{
-      border:none;
-      border-radius:16px;
-      padding:12px 14px;
-      cursor:pointer;
-      font-weight:900;
-      flex:1;
-      min-width:160px;
-    }
-
-    .danger{background:#ffe9ef; color:#c21f52; border:1px solid #ffd1df;}
-
-    .list{
-      margin-top:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
-    .item{
-      padding:14px;
-      border-radius:18px;
-      border:1px solid var(--border);
-      background:#fff;
-      cursor:pointer;
-      transition:0.2s;
-    }
-
-    .item:hover{transform:translateY(-1px);}
-
-    .item h4{font-size:14px; font-weight:900; margin-bottom:6px;}
-    .item p{font-size:13px; color:var(--muted);}
-
-    .badge{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:999px;
-      font-weight:900;
-      font-size:12px;
-      margin-top:10px;
-      background:#f1ecff;
-      border:1px solid #e3dcff;
-      color:#4b47c8;
-    }
-
-    .timer{
-      font-size:36px;
-      font-weight:1000;
-      letter-spacing:1px;
-      margin-top:12px;
-      color:#4b47c8;
-    }
-
-    @media (max-width: 820px){
-      .grid{grid-template-columns:1fr;}
-      .shortcuts{grid-template-columns:1fr 1fr;}
-    }
-
-    @media (max-width: 420px){
-      .shortcuts{grid-template-columns:1fr;}
-      .logo h1{font-size:24px;}
-    }
-
-  </style></head>
-<body><canvas id="bgCanvas"></canvas>
-
-  <div class="overlay"></div>  <header>
-    <div class="topbar">
-      <div class="logo">
-        <h1>S.O.S Eficiência 💜</h1>
-        <p>Apoio à ansiedade feminina • Acolhimento, informação e cuidado</p>
-      </div><button class="sos-btn" onclick="openSOS()">💜 SOS</button>
-</div>
-
-  </header>  <main class="container"><!-- PAGINA HOME -->
-<section class="page active" id="page-home">
-
-  <section class="banner">
-    <small>FRASE DO DIA</small>
-    <h2 id="fraseDia">Permita-se um momento só seu hoje.</h2>
-  </section>
-
-  <section class="grid">
-    <div class="card">
-      <h3>Como está hoje?</h3>
-      <p>Toque para registrar seu humor e acompanhar sua evolução emocional.</p>
-
-      <div class="mood" id="moodButtons">
-        <button onclick="setMood(1,'Muito mal')">😞 Muito mal</button>
-        <button onclick="setMood(2,'Pra baixo')">😔 Pra baixo</button>
-        <button onclick="setMood(3,'Mais ou menos')">😐 Mais ou menos</button>
-        <button onclick="setMood(4,'Bem')">🙂 Bem</button>
-        <button onclick="setMood(5,'Ótima')">😊 Ótima</button>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S.O.S Eficiência 💜</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+  :root {
+    --primary: #7c5cbf;
+    --primary-light: #9b7de8;
+    --primary-soft: #c4b5f0;
+    --accent: #e8b4f8;
+    --accent2: #f4b8d4;
+    --bg: #f0ebff;
+    --bg2: #faf7ff;
+    --card: rgba(255,255,255,0.82);
+    --card-border: rgba(180,150,240,0.25);
+    --text: #3a2d5c;
+    --text2: #6e5fa0;
+    --text3: #a390c8;
+    --shadow: 0 8px 32px rgba(124,92,191,0.13);
+    --radius: 22px;
+    --nav-h: 72px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* CANVAS BG */
+  #bgCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* APP SHELL */
+  #app {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: rgba(240,235,255,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .topbar-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.3px;
+  }
+
+  .topbar-logo span { color: var(--accent); }
+
+  .sos-btn {
+    background: linear-gradient(135deg, #e05fa0, #c44d8c);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 18px rgba(196,77,140,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .sos-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 22px rgba(196,77,140,0.45); }
+  .sos-btn:active { transform: scale(0.97); }
+
+  /* PAGES */
+  .pages {
+    flex: 1;
+    padding-top: 64px;
+    padding-bottom: calc(var(--nav-h) + 16px);
+  }
+
+  .page {
+    display: none;
+    padding: 20px 18px 8px;
+    animation: fadeUp 0.38s ease;
+  }
+  .page.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    height: var(--nav-h);
+    display: flex;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--card-border);
+    box-shadow: 0 -4px 24px rgba(124,92,191,0.09);
+  }
+
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: color 0.2s;
+    padding: 6px 0;
+  }
+
+  .nav-btn .nav-icon {
+    font-size: 1.55rem;
+    transition: transform 0.2s;
+  }
+  .nav-btn.active { color: var(--primary); }
+  .nav-btn.active .nav-icon { transform: translateY(-3px) scale(1.12); }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* FRASE DO DIA */
+  .frase-card {
+    background: linear-gradient(135deg, #9b7de8 0%, #7c5cbf 60%, #c44d8c 100%);
+    color: #fff;
+    border: none;
+    text-align: center;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .frase-card::before {
+    content: '❝';
+    position: absolute;
+    top: -10px; left: 14px;
+    font-size: 5rem;
+    opacity: 0.15;
+    font-family: serif;
+    line-height: 1;
+  }
+  .frase-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 10px;
+  }
+  .frase-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    opacity: 0.95;
+  }
+  .frase-author {
+    font-size: 0.78rem;
+    opacity: 0.7;
+    margin-top: 10px;
+    font-weight: 700;
+  }
+
+  /* HUMOR BUTTONS */
+  .humor-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .humor-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: rgba(124,92,191,0.07);
+    border: 2px solid transparent;
+    border-radius: 16px;
+    padding: 12px 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text2);
+  }
+  .humor-btn .emoji { font-size: 1.8rem; }
+  .humor-btn:hover { background: rgba(124,92,191,0.14); border-color: var(--primary-soft); }
+  .humor-btn.selected { background: rgba(124,92,191,0.18); border-color: var(--primary); color: var(--primary); }
+
+  /* WEEK BARS */
+  .week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    align-items: flex-end;
+    height: 80px;
+    margin-bottom: 8px;
+  }
+  .week-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    height: 100%;
+    justify-content: flex-end;
+    cursor: pointer;
+  }
+  .week-bar {
+    width: 100%;
+    border-radius: 8px 8px 4px 4px;
+    transition: all 0.3s;
+    min-height: 8px;
+  }
+  .week-day-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--text3);
+  }
+
+  /* SHORTCUTS */
+  .shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .shortcut-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,92,191,0.08);
+    border: 1.5px solid var(--card-border);
+    border-radius: 18px;
+    padding: 16px 8px 14px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--primary);
+    transition: all 0.2s;
+  }
+  .shortcut-btn .icon { font-size: 1.6rem; }
+  .shortcut-btn:hover { background: rgba(124,92,191,0.16); transform: translateY(-2px); }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .ver-mais {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    text-decoration: underline;
+  }
+
+  /* DIARIO */
+  .diary-textarea {
+    width: 100%;
+    min-height: 180px;
+    border: 2px solid var(--card-border);
+    border-radius: 16px;
+    padding: 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: rgba(255,255,255,0.7);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .diary-textarea:focus { border-color: var(--primary); }
+
+  .btn-row { display: flex; gap: 10px; margin-top: 12px; }
+
+  .btn-primary {
+    flex: 1;
+    padding: 13px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(124,92,191,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(124,92,191,0.4); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .btn-secondary {
+    padding: 13px 20px;
+    border: 2px solid var(--card-border);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.6);
+    color: var(--text2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.9); border-color: var(--primary-soft); }
+
+  .diary-meta {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 10px;
+  }
+
+  .humor-history {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .humor-history-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(124,92,191,0.06);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: var(--text2);
+  }
+  .humor-history-item .hi-emoji { font-size: 1.3rem; }
+  .humor-history-item .hi-date { margin-left: auto; font-size: 0.72rem; color: var(--text3); }
+
+  /* RESPIRAÇÃO */
+  .breath-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 10px;
+  }
+  .breath-circle-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin-bottom: 24px;
+  }
+  .breath-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(155,125,232,0.25), rgba(196,77,140,0.15));
+    border: 3px solid rgba(155,125,232,0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 1s ease-in-out;
+    box-shadow: 0 0 0 0 rgba(155,125,232,0.3);
+  }
+  .breath-circle.inhale {
+    animation: inhaleAnim 4s ease-in-out forwards;
+  }
+  .breath-circle.hold {
+    animation: holdAnim 2s ease forwards;
+  }
+  .breath-circle.exhale {
+    animation: exhaleAnim 4s ease-in-out forwards;
+  }
+  @keyframes inhaleAnim {
+    from { transform: scale(1); box-shadow: 0 0 0 0 rgba(155,125,232,0.3); }
+    to { transform: scale(1.3); box-shadow: 0 0 40px 10px rgba(155,125,232,0.2); }
+  }
+  @keyframes holdAnim {
+    from { transform: scale(1.3); }
+    to { transform: scale(1.3); }
+  }
+  @keyframes exhaleAnim {
+    from { transform: scale(1.3); box-shadow: 0 0 40px 10px rgba(155,125,232,0.2); }
+    to { transform: scale(1); box-shadow: 0 0 0 0 rgba(155,125,232,0); }
+  }
+  .breath-phase {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .breath-timer {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-light);
+    margin-top: 4px;
+  }
+  .breath-label {
+    font-size: 0.78rem;
+    color: var(--text3);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .tip-card {
+    background: linear-gradient(135deg, rgba(232,180,248,0.3), rgba(244,184,212,0.25));
+    border: 1.5px solid rgba(200,150,240,0.25);
+    border-radius: 18px;
+    padding: 18px;
+    margin-top: 6px;
+    text-align: center;
+  }
+  .tip-text {
+    font-size: 0.92rem;
+    color: var(--text2);
+    line-height: 1.55;
+    font-weight: 600;
+  }
+
+  /* BIBLIOTECA */
+  .article-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,0.75);
+    border: 1.5px solid var(--card-border);
+    border-radius: 18px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .article-item:hover { background: rgba(255,255,255,0.95); transform: translateX(4px); box-shadow: var(--shadow); }
+  .article-emoji { font-size: 2rem; }
+  .article-info { flex: 1; }
+  .article-title { font-size: 0.95rem; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+  .article-desc { font-size: 0.78rem; color: var(--text3); font-weight: 600; }
+  .article-arrow { color: var(--primary-soft); font-size: 1.2rem; }
+
+  /* EU PAGE */
+  .about-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
+    color: #fff;
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .about-text {
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.65;
+    font-weight: 600;
+  }
+
+  .btn-danger {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid rgba(220,70,70,0.3);
+    border-radius: 14px;
+    background: rgba(255,100,100,0.07);
+    color: #c04040;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .btn-danger:hover { background: rgba(255,100,100,0.15); }
+
+  /* MODAIS */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(30,15,60,0.55);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal {
+    background: var(--bg2);
+    border-radius: 28px 28px 0 0;
+    padding: 28px 24px 40px;
+    width: 100%;
+    max-width: 520px;
+    transform: translateY(100%);
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-overlay.open .modal {
+    transform: translateY(0);
+  }
+  .modal-handle {
+    width: 40px;
+    height: 5px;
+    background: var(--primary-soft);
+    border-radius: 10px;
+    margin: 0 auto 20px;
+  }
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .modal-body {
+    font-size: 0.92rem;
+    color: var(--text2);
+    line-height: 1.7;
+    font-weight: 600;
+  }
+  .modal-close {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #9b7de8, #7c5cbf);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 18px;
+  }
+
+  /* SOS MODAL */
+  .sos-modal .modal-title { color: #c44d8c; }
+  .sos-modal .cvv-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #e05fa0, #c44d8c);
+    color: #fff;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin: 16px 0;
+    box-shadow: 0 4px 20px rgba(196,77,140,0.3);
+  }
+  .sos-modal .btn-call {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #e05fa0, #c44d8c);
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 16px rgba(196,77,140,0.3);
+  }
+
+  /* SEMANA MODAL */
+  .day-modal-emoji { font-size: 3rem; text-align: center; margin: 14px 0 8px; }
+  .day-modal-humor { text-align: center; font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+  .day-modal-date { text-align: center; font-size: 0.8rem; color: var(--text3); font-weight: 600; margin-top: 4px; }
+
+  /* SOBRE */
+  .sobre-text {
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.7;
+    font-weight: 600;
+  }
+  .sobre-highlight {
+    color: var(--primary);
+    font-weight: 800;
+  }
+
+  /* ULTIMO HUMOR */
+  .last-humor-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(124,92,191,0.08);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: var(--text2);
+    font-weight: 600;
+  }
+  .last-humor-display .lh-emoji { font-size: 1.6rem; }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--primary-soft); border-radius: 4px; }
+
+  /* PAGE TITLE */
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 18px;
+  }
+  .page-title span { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div id="app">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">S.O.S <span>Eficiência</span> 💜</div>
+    <button class="sos-btn" onclick="openModal('sosModal')">🆘 SOS</button>
+  </div>
+
+  <!-- PAGES -->
+  <div class="pages">
+
+    <!-- INÍCIO -->
+    <div id="page-inicio" class="page active">
+      <div class="card frase-card">
+        <div class="frase-label">✨ Frase do dia</div>
+        <div class="frase-text" id="fraseText">Carregando...</div>
+        <div class="frase-author" id="fraseAuthor"></div>
       </div>
 
-      <p id="moodText" style="margin-top:12px; font-weight:900; color:#4b47c8;"></p>
-      <span class="badge" id="lastMoodBadge">Nenhum humor registrado ainda.</span>
+      <div class="card">
+        <div class="card-title">🌸 Como está hoje?</div>
+        <div class="humor-grid">
+          <button class="humor-btn" onclick="saveHumor('Muito mal','😰')" data-key="Muito mal">
+            <span class="emoji">😰</span>Muito mal
+          </button>
+          <button class="humor-btn" onclick="saveHumor('Pra baixo','😔')" data-key="Pra baixo">
+            <span class="emoji">😔</span>Pra baixo
+          </button>
+          <button class="humor-btn" onclick="saveHumor('Mais ou menos','😐')" data-key="Mais ou menos">
+            <span class="emoji">😐</span>Mais ou menos
+          </button>
+          <button class="humor-btn" onclick="saveHumor('Bem','😊')" data-key="Bem">
+            <span class="emoji">😊</span>Bem
+          </button>
+          <button class="humor-btn" onclick="saveHumor('Ótima','🤩')" data-key="Ótima">
+            <span class="emoji">🤩</span>Ótima
+          </button>
+        </div>
+        <div id="lastHumorDisplay" class="last-humor-display" style="display:none;">
+          <span class="lh-emoji" id="lastHumorEmoji"></span>
+          <div>
+            <div style="font-size:0.78rem;color:var(--text3);font-weight:700;">Último registro</div>
+            <div id="lastHumorLabel"></div>
+          </div>
+          <div style="margin-left:auto;font-size:0.72rem;color:var(--text3);" id="lastHumorDate"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="section-title">📊 Sua semana</div>
+          <button class="ver-mais" onclick="goTo('diario')">Ver mais →</button>
+        </div>
+        <div class="week-grid" id="weekGrid"></div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:2px;" id="weekLabels"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🚀 Atalhos rápidos</div>
+        <div class="shortcuts-grid">
+          <button class="shortcut-btn" onclick="goTo('exercicios')">
+            <span class="icon">🌬️</span>Respiração
+          </button>
+          <button class="shortcut-btn" onclick="goTo('diario')">
+            <span class="icon">📖</span>Diário
+          </button>
+          <button class="shortcut-btn" onclick="goTo('biblioteca')">
+            <span class="icon">📚</span>Biblioteca
+          </button>
+          <button class="shortcut-btn" onclick="openModal('sosModal')">
+            <span class="icon">🆘</span>Ajuda
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💜 Sobre o projeto</div>
+        <p class="sobre-text">
+          O <span class="sobre-highlight">S.O.S Eficiência</span> é um espaço digital acolhedor criado para apoiar mulheres que vivem com ansiedade no dia a dia. Aqui você encontra ferramentas práticas, exercícios de respiração, um diário emocional e recursos educativos — tudo em um só lugar, com carinho e empatia. 🌸
+        </p>
+      </div>
     </div>
 
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-        <h3>Sua semana</h3>
-        <a href="#" onclick="openWeekDetails(); return false;" style="color:#6f6bd8; font-weight:900; text-decoration:none;">Ver mais</a>
+    <!-- DIÁRIO -->
+    <div id="page-diario" class="page">
+      <div class="page-title">📖 Meu <span>Diário</span></div>
+
+      <div class="card">
+        <div class="card-title">✍️ Escreva como você se sente</div>
+        <textarea class="diary-textarea" id="diaryText" placeholder="Hoje eu me sinto... O que passou pela minha cabeça foi... Estou com saudade de..."></textarea>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveDiary()">💾 Salvar</button>
+          <button class="btn-secondary" onclick="clearDiary()">🗑 Limpar</button>
+        </div>
+        <div class="diary-meta" id="diaryMeta"></div>
       </div>
 
-      <div class="week">
-        <div>
-          <div class="bars" id="weekBars"></div>
-          <div class="days">
-            <span>S</span>
-            <span>D</span>
-            <span>S</span>
-            <span>T</span>
-            <span>Q</span>
-            <span>Q</span>
-            <span>S</span>
+      <div class="card">
+        <div class="card-title">🌙 Histórico de humores</div>
+        <div class="humor-history" id="humorHistory">
+          <div style="color:var(--text3);font-size:0.85rem;font-weight:600;text-align:center;padding:16px 0;">Nenhum humor registrado ainda 🌱</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXERCÍCIOS -->
+    <div id="page-exercicios" class="page">
+      <div class="page-title">🌬️ <span>Exercícios</span></div>
+
+      <div class="card">
+        <div class="card-title">🫁 Respiração 4-2-4</div>
+        <div class="breath-container">
+          <div class="breath-circle-wrap">
+            <div class="breath-circle" id="breathCircle">
+              <div class="breath-phase" id="breathPhase">Pronta?</div>
+              <div class="breath-timer" id="breathTimer">—</div>
+              <div class="breath-label" id="breathLabel">Toque em Começar</div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" id="breathStartBtn" onclick="toggleBreath()">▶️ Começar</button>
+          </div>
+        </div>
+        <div style="background:rgba(124,92,191,0.07);border-radius:14px;padding:14px 16px;margin-top:4px;">
+          <div style="font-size:0.8rem;color:var(--text3);font-weight:700;margin-bottom:6px;">ℹ️ Como funciona:</div>
+          <div style="font-size:0.84rem;color:var(--text2);font-weight:600;line-height:1.6;">
+            🟣 Inspire por <b>4 segundos</b> — expanda os pulmões<br>
+            ⚪ Segure por <b>2 segundos</b> — sinta o ar<br>
+            🫧 Expire por <b>4 segundos</b> — solte tudo
           </div>
         </div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; margin-top:10px;">
-        <p style="font-weight:900;">Termômetro emocional</p>
-        <p style="font-weight:1000; color:#6f6bd8;" id="weekStatus">Sua semana está começando 💜</p>
+      <div class="card">
+        <div class="section-header">
+          <div class="section-title">💡 Dica de relaxamento</div>
+          <button class="ver-mais" onclick="newTip()">Nova dica ↻</button>
+        </div>
+        <div class="tip-card">
+          <div class="tip-text" id="tipText">Carregando...</div>
+        </div>
       </div>
     </div>
-  </section>
 
-  <section class="card">
-    <h3>Sobre o projeto</h3>
-    <p>
-      O <b>S.O.S Eficiência 💜</b> é um projeto criado para apoiar meninas e mulheres que enfrentam ansiedade,
-      trazendo acolhimento, informação, ferramentas de respiração e um espaço seguro para registrar sentimentos.
-    </p>
-    <p style="margin-top:10px;">
-      <b>Projeto:</b> Desafio Liga Jovem • <b>Objetivo:</b> cuidado emocional e apoio diário.
-    </p>
-  </section>
+    <!-- BIBLIOTECA -->
+    <div id="page-biblioteca" class="page">
+      <div class="page-title">📚 <span>Biblioteca</span></div>
 
-  <section class="card">
-    <h3>Atalhos</h3>
-    <div class="shortcuts">
-      <div class="shortcut" onclick="openPage('page-exercicios')">
-        <div class="icon">🌬️</div>
-        <h4>Respirar</h4>
-        <p>Exercício rápido (3 min)</p>
+      <div class="article-item" onclick="openArticle(0)">
+        <div class="article-emoji">🧠</div>
+        <div class="article-info">
+          <div class="article-title">O que é ansiedade?</div>
+          <div class="article-desc">Entenda o que acontece no seu corpo e mente</div>
+        </div>
+        <div class="article-arrow">›</div>
       </div>
 
-      <div class="shortcut" onclick="openPage('page-diario')">
-        <div class="icon">✍️</div>
-        <h4>Escrever</h4>
-        <p>Espaço seguro</p>
+      <div class="article-item" onclick="openArticle(1)">
+        <div class="article-emoji">🌪️</div>
+        <div class="article-info">
+          <div class="article-title">Crise de ansiedade: o que fazer?</div>
+          <div class="article-desc">Técnicas para o momento de crise</div>
+        </div>
+        <div class="article-arrow">›</div>
       </div>
 
-      <div class="shortcut" onclick="openPage('page-biblioteca')">
-        <div class="icon">📚</div>
-        <h4>Biblioteca</h4>
-        <p>Informação e cuidado</p>
+      <div class="article-item" onclick="openArticle(2)">
+        <div class="article-emoji">🌸</div>
+        <div class="article-info">
+          <div class="article-title">Autocuidado emocional</div>
+          <div class="article-desc">Pequenas práticas que fazem grande diferença</div>
+        </div>
+        <div class="article-arrow">›</div>
       </div>
 
-      <div class="shortcut" onclick="openSOS()">
-        <div class="icon">💬</div>
-        <h4>Ajuda</h4>
-        <p>Suporte e orientação</p>
-      </div>
-    </div>
-  </section>
-
-</section>
-
-<!-- PAGINA DIARIO -->
-<section class="page" id="page-diario">
-  <section class="card">
-    <h3>📖 Diário emocional</h3>
-    <p>Escreva como você se sente. Isso fica salvo no seu celular/PC (LocalStorage).</p>
-
-    <textarea id="diaryText" placeholder="Escreva aqui..."></textarea>
-
-    <div class="row">
-      <button class="btn-primary" onclick="saveDiary()">Salvar</button>
-      <button class="btn-outline" onclick="clearDiary()">Limpar</button>
-    </div>
-
-    <p style="margin-top:10px; font-weight:900; color:#4b47c8;" id="diaryStatus"></p>
-
-    <div style="margin-top:14px;">
-      <h3>📌 Histórico de humores</h3>
-      <p>Seu humor registrado nos últimos dias.</p>
-
-      <div class="list" id="moodHistory"></div>
-    </div>
-  </section>
-</section>
-
-<!-- PAGINA EXERCICIOS -->
-<section class="page" id="page-exercicios">
-  <section class="card">
-    <h3>🌬️ Exercício de respiração</h3>
-    <p>Respire com calma: inspire 4s • segure 2s • expire 4s.</p>
-
-    <div class="timer" id="breathTimer">00:00</div>
-    <p style="margin-top:6px; font-weight:1000; color:#6f6bd8;" id="breathPhase">Pronta para começar 💜</p>
-
-    <div class="row">
-      <button class="btn-primary" onclick="startBreathing()">Começar</button>
-      <button class="btn-outline" onclick="stopBreathing()">Parar</button>
-    </div>
-
-    <p style="margin-top:12px; font-size:13px;">
-      Dica: se sentir ansiedade forte, tente repetir por 3 minutos.
-    </p>
-  </section>
-
-  <section class="card">
-    <h3>✨ Relaxamento rápido</h3>
-    <p>Toque para receber uma dica rápida.</p>
-
-    <div class="row">
-      <button class="btn-outline" onclick="randomTip()">Gerar dica</button>
-    </div>
-
-    <p style="margin-top:12px; font-weight:900; color:#4b47c8;" id="tipBox"></p>
-  </section>
-</section>
-
-<!-- PAGINA BIBLIOTECA -->
-<section class="page" id="page-biblioteca">
-  <section class="card">
-    <h3>📚 Biblioteca</h3>
-    <p>Conteúdos educativos sobre ansiedade, autocuidado e apoio emocional.</p>
-
-    <div class="list">
-      <div class="item" onclick="openArticle(1)">
-        <h4>O que é ansiedade?</h4>
-        <p>Entenda sintomas, causas e como reconhecer.</p>
+      <div class="article-item" onclick="openArticle(3)">
+        <div class="article-emoji">🤝</div>
+        <div class="article-info">
+          <div class="article-title">Quando pedir ajuda profissional?</div>
+          <div class="article-desc">Sinais de que é hora de buscar apoio especializado</div>
+        </div>
+        <div class="article-arrow">›</div>
       </div>
 
-      <div class="item" onclick="openArticle(2)">
-        <h4>Crise de ansiedade: o que fazer?</h4>
-        <p>Passo a passo para se acalmar com segurança.</p>
-      </div>
-
-      <div class="item" onclick="openArticle(3)">
-        <h4>Autocuidado emocional</h4>
-        <p>Pequenas práticas para fortalecer sua mente.</p>
-      </div>
-
-      <div class="item" onclick="openArticle(4)">
-        <h4>Quando pedir ajuda profissional?</h4>
-        <p>Psicólogo, psiquiatra e rede de apoio.</p>
+      <div class="card" style="background:linear-gradient(135deg,rgba(155,125,232,0.12),rgba(196,77,140,0.08));border-color:rgba(155,125,232,0.2);">
+        <div style="font-size:0.85rem;color:var(--text2);font-weight:600;line-height:1.6;text-align:center;">
+          💜 Lembre-se: buscar informação é um ato de amor próprio. Você não está sozinha.
+        </div>
       </div>
     </div>
-  </section>
-</section>
 
-<!-- PAGINA PERFIL -->
-<section class="page" id="page-eu">
-  <section class="card">
-    <h3>👤 Meu perfil</h3>
-    <p>Configurações e informações do seu projeto.</p>
+    <!-- EU -->
+    <div id="page-eu" class="page">
+      <div class="page-title">👤 <span>Sobre mim</span></div>
 
-    <div style="margin-top:12px;">
-      <p><b>Projeto:</b> S.O.S Eficiência 💜</p>
-      <p><b>Foco:</b> Apoio à ansiedade feminina</p>
-      <p><b>Objetivo:</b> Acolhimento, informação e cuidado</p>
-      <p><b>Competição:</b> Desafio Liga Jovem</p>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:4rem;margin-bottom:12px;">💜</div>
+        <div class="about-badge">✨ S.O.S Eficiência</div>
+        <div class="about-text" style="text-align:center;">
+          Um espaço criado com carinho para apoiar mulheres em sua jornada emocional. Seus dados ficam apenas no seu dispositivo — com privacidade e segurança. 🌸
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗃️ Seus dados</div>
+        <div id="statsDisplay" style="font-size:0.88rem;color:var(--text2);font-weight:600;line-height:2;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚙️ Configurações</div>
+        <button class="btn-primary" onclick="exportData()" style="margin-bottom:10px;">📤 Exportar meus dados (JSON)</button>
+        <button class="btn-danger" onclick="confirmReset()">🗑 Resetar dados do app</button>
+      </div>
+
+      <div class="card">
+        <div style="font-size:0.78rem;color:var(--text3);font-weight:600;text-align:center;line-height:1.7;">
+          Feito com 💜 para mulheres incríveis<br>
+          Em caso de emergência: CVV 188 (24h, gratuito)
+        </div>
+      </div>
     </div>
 
-    <div class="row" style="margin-top:14px;">
-      <button class="btn-outline" onclick="resetAllData()">Resetar dados do app</button>
-      <button class="btn-primary" onclick="exportData()">Exportar dados</button>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="goTo('inicio')" id="nav-inicio">
+      <span class="nav-icon">🏠</span>Início
+    </button>
+    <button class="nav-btn" onclick="goTo('diario')" id="nav-diario">
+      <span class="nav-icon">📖</span>Diário
+    </button>
+    <button class="nav-btn" onclick="goTo('exercicios')" id="nav-exercicios">
+      <span class="nav-icon">🌬️</span>Exercícios
+    </button>
+    <button class="nav-btn" onclick="goTo('biblioteca')" id="nav-biblioteca">
+      <span class="nav-icon">📚</span>Biblioteca
+    </button>
+    <button class="nav-btn" onclick="goTo('eu')" id="nav-eu">
+      <span class="nav-icon">👤</span>Eu
+    </button>
+  </nav>
+</div>
+
+<!-- SOS MODAL -->
+<div class="modal-overlay" id="sosModal">
+  <div class="modal sos-modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🆘 Você não está sozinha</div>
+    <div class="modal-body" style="text-align:center;">
+      Respirar fundo. 💜 Estamos aqui com você.<br><br>
+      Se você está passando por um momento muito difícil, o <strong>CVV — Centro de Valorização da Vida</strong> oferece apoio emocional 24 horas por dia, de forma gratuita e sigilosa.
     </div>
-
-    <p style="margin-top:12px; font-size:13px; color:var(--muted);">
-      Seus dados são armazenados apenas no seu dispositivo usando LocalStorage.
-    </p>
-  </section>
-</section>
-
-  </main>  <footer>
-    <button class="active" id="btn-home" onclick="openPage('page-home')">
-      <div class="dot"></div>
-      🏠 Início
-    </button><button id="btn-diario" onclick="openPage('page-diario')">
-  <div class="dot"></div>
-  📖 Diário
-</button>
-
-<button id="btn-exercicios" onclick="openPage('page-exercicios')">
-  <div class="dot"></div>
-  🌬️ Exercícios
-</button>
-
-<button id="btn-biblioteca" onclick="openPage('page-biblioteca')">
-  <div class="dot"></div>
-  📚 Biblioteca
-</button>
-
-<button id="btn-eu" onclick="openPage('page-eu')">
-  <div class="dot"></div>
-  👤 Eu
-</button>
-
-  </footer>  <!-- MODAL SOS -->  <div class="modal" id="modalSOS">
-    <div class="modal-box">
-      <h3>💜 SOS - Apoio imediato</h3>
-      <p>
-        Se você estiver em crise, respire fundo. Você não está sozinha.
-        Procure alguém de confiança agora.
-      </p>
-      <p style="margin-top:10px;">
-        <b>CVV (Brasil):</b> 188 (24h)
-      </p><div class="modal-actions">
-    <button class="btn-outline" onclick="closeSOS()">Fechar</button>
-    <button class="btn-primary" onclick="window.location.href='tel:188'">Ligar 188</button>
+    <div class="cvv-chip">📞 188</div>
+    <div style="font-size:0.8rem;color:var(--text3);text-align:center;font-weight:600;margin-bottom:4px;">Disponível 24h por dia • Gratuito • Sigiloso</div>
+    <button class="btn-call" onclick="callCVV()">📞 Ligar para o 188 agora</button>
+    <button class="modal-close" onclick="closeModal('sosModal')">Fechar — estou bem por enquanto</button>
   </div>
 </div>
 
-  </div>  <!-- MODAL ARTIGOS -->  <div class="modal" id="modalArticle">
-    <div class="modal-box">
-      <h3 id="articleTitle">Título</h3>
-      <p id="articleText">Texto...</p><div class="modal-actions">
-    <button class="btn-primary" onclick="closeArticle()">Fechar</button>
+<!-- ARTICLE MODAL -->
+<div class="modal-overlay" id="articleModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="articleModalTitle"></div>
+    <div class="modal-body" id="articleModalBody"></div>
+    <button class="modal-close" onclick="closeModal('articleModal')">Fechar</button>
   </div>
 </div>
 
-  </div>  <script>
-    /* ============================
-       SISTEMA DE PAGINAS
-    ============================ */
+<!-- DAY MODAL -->
+<div class="modal-overlay" id="dayModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="dayModalTitle">Seu dia</div>
+    <div class="day-modal-emoji" id="dayModalEmoji"></div>
+    <div class="day-modal-humor" id="dayModalHumor"></div>
+    <div class="day-modal-date" id="dayModalDate"></div>
+    <button class="modal-close" onclick="closeModal('dayModal')">Fechar</button>
+  </div>
+</div>
 
-    function openPage(pageId){
-      const pages = document.querySelectorAll('.page');
-      pages.forEach(p => p.classList.remove('active'));
-      document.getElementById(pageId).classList.add('active');
+<script>
+// ============ CANVAS BACKGROUND ============
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
 
-      // botões do footer
-      const buttons = ['home','diario','exercicios','biblioteca','eu'];
-      buttons.forEach(id => document.getElementById('btn-'+id).classList.remove('active'));
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
 
-      if(pageId === 'page-home') document.getElementById('btn-home').classList.add('active');
-      if(pageId === 'page-diario') document.getElementById('btn-diario').classList.add('active');
-      if(pageId === 'page-exercicios') document.getElementById('btn-exercicios').classList.add('active');
-      if(pageId === 'page-biblioteca') document.getElementById('btn-biblioteca').classList.add('active');
-      if(pageId === 'page-eu') document.getElementById('btn-eu').classList.add('active');
+function createParticle() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 3 + 1,
+    dx: (Math.random() - 0.5) * 0.4,
+    dy: (Math.random() - 0.5) * 0.4,
+    alpha: Math.random() * 0.4 + 0.1,
+    color: ['#9b7de8','#c4b5f0','#e8b4f8','#c44d8c','#7c5cbf'][Math.floor(Math.random()*5)]
+  };
+}
 
-      // atualizações automáticas
-      if(pageId === 'page-diario') renderMoodHistory();
-    }
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 55; i++) particles.push(createParticle());
+}
 
-    /* ============================
-       FRASE DO DIA
-    ============================ */
+function drawGradient() {
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  grad.addColorStop(0, '#f0ebff');
+  grad.addColorStop(0.5, '#f8f4ff');
+  grad.addColorStop(1, '#fdeeff');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-    const frases = [
-      "Permita-se um momento só seu hoje.",
-      "Você não precisa ser forte o tempo todo.",
-      "Respire. Tudo passa.",
-      "Seu valor não depende da sua produtividade.",
-      "Você merece paz, mesmo nos dias difíceis.",
-      "Uma pausa também é progresso.",
-      "Você está fazendo o melhor que pode."
-    ];
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGradient();
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + Math.round(p.alpha * 255).toString(16).padStart(2, '0');
+    ctx.fill();
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(animateParticles);
+}
 
-    function updateFrase(){
-      const hoje = new Date().toDateString();
-      const index = Math.abs(hashCode(hoje)) % frases.length;
-      document.getElementById('fraseDia').innerText = frases[index];
-    }
+resizeCanvas(); initParticles(); animateParticles();
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
 
-    function hashCode(str){
-      let hash = 0;
-      for(let i=0; i<str.length; i++){
-        hash = ((hash<<5) - hash) + str.charCodeAt(i);
-        hash |= 0;
+// ============ DATA ============
+const FRASES = [
+  { text: "Você é mais forte do que pensa, mais amada do que sabe.", author: "— Desconhecida" },
+  { text: "Cuidar de si mesma não é egoísmo. É sobrevivência.", author: "— Audre Lorde" },
+  { text: "Cada respiração é um recomeço.", author: "— Thich Nhat Hanh" },
+  { text: "A calma é uma superpotência.", author: "— Desconhecida" },
+  { text: "Você não precisa ser perfeita para ser incrível.", author: "— Desconhecida" },
+  { text: "Seus sentimentos são válidos. Todos eles.", author: "— Desconhecida" },
+  { text: "Pequenos passos ainda são progresso.", author: "— Desconhecida" },
+];
+
+const TIPS = [
+  "🧘 Sente o peso do corpo na cadeira ou na cama. Perceba o contato com a superfície e relaxe cada músculo, um por um.",
+  "🌊 Imagine uma onda suave de relaxamento começando pelos pés e subindo até a cabeça, dissolvendo toda tensão.",
+  "🎵 Coloque uma música calma e feche os olhos por 3 minutinhos. Deixe a melodia te abraçar.",
+  "💧 Beba um copo d'água com atenção plena. Sinta a temperatura, o sabor e a sensação de hidratação.",
+  "🌿 Se possível, saia para olhar o céu por alguns minutos. O ar fresco faz maravilhas.",
+  "✍️ Escreva 3 coisas pequenas pelas quais você é grata hoje.",
+  "🐾 Se você tem um pet, passe alguns minutos acariciando-o. Isso libera oxitocina!",
+  "🕯️ Acenda uma vela ou incenso favorito e respire o aroma com atenção.",
+  "📵 Coloque o celular no silencioso por 10 minutos. Você merece essa pausa.",
+  "🤗 Dê um abraço em si mesma. Seriamente. Funciona!",
+];
+
+const ARTICLES = [
+  {
+    emoji: '🧠',
+    title: 'O que é ansiedade?',
+    body: `A ansiedade é uma resposta natural do nosso organismo ao perigo ou ao estresse. É o corpo se preparando para agir — o coração acelera, a respiração fica mais rápida, os músculos ficam tensos.\n\nO problema surge quando essa resposta acontece com frequência e intensidade desproporcional às situações do dia a dia. Quando a ansiedade é constante e interfere na vida, pode ser um Transtorno de Ansiedade, que é uma condição de saúde mental tratável.\n\nSintomas comuns:\n• Preocupação excessiva e difícil de controlar\n• Tensão muscular\n• Dificuldade para dormir\n• Irritabilidade\n• Sensação de perigo iminente\n• Aceleração do coração\n\n💜 Lembre-se: sentir ansiedade não é fraqueza. É humano. E tem tratamento.`
+  },
+  {
+    emoji: '🌪️',
+    title: 'Crise de ansiedade: o que fazer?',
+    body: `Uma crise de ansiedade pode ser assustadora, mas passa. Aqui estão estratégias para o momento agudo:\n\n🌬️ RESPIRAÇÃO: Inspire por 4 segundos, segure por 2, expire por 4. Repita até sentir alívio.\n\n👁️ TÉCNICA 5-4-3-2-1: Nomeie 5 coisas que você vê, 4 que pode tocar, 3 sons que ouve, 2 cheiros e 1 sabor.\n\n💧 ÁGUA FRIA: Jogue água fria no rosto ou segure um cubo de gelo. Ativa o nervo vago e acalma.\n\n🗣️ NOMEIE: Diga para si mesma "Estou tendo ansiedade. Isso vai passar. Estou segura."\n\n📞 LIGUE: Se sentir que não consegue se controlar, ligue para alguém de confiança ou para o CVV: 188.\n\n⚠️ Se as crises são frequentes, busque apoio profissional.`
+  },
+  {
+    emoji: '🌸',
+    title: 'Autocuidado emocional',
+    body: `Autocuidado emocional não é luxo — é necessidade. São pequenas práticas que, feitas com consistência, transformam como você se sente por dentro.\n\n🌙 SONO: Priorize 7-9 horas de sono. A privação de sono amplifica a ansiedade.\n\n🍃 MOVIMENTO: Caminhadas de 20 minutos já reduzem significativamente o estresse.\n\n📵 PAUSAS DIGITAIS: Estabeleça horários longe das redes sociais.\n\n✍️ DIÁRIO EMOCIONAL: Escrever sobre o que você sente ajuda a processar emoções.\n\n🤝 CONEXÃO: Tempo de qualidade com pessoas queridas é remédio para a alma.\n\n🎨 CRIATIVIDADE: Pintura, música, escrita, dança — qualquer expressão criativa alivia.\n\n💜 Qual dessas práticas você pode começar hoje?`
+  },
+  {
+    emoji: '🤝',
+    title: 'Quando pedir ajuda profissional?',
+    body: `Pedir ajuda é um ato de coragem e inteligência emocional. Considere buscar apoio profissional quando:\n\n🔴 A ansiedade interfere no trabalho, estudo ou relacionamentos\n🔴 Você evita situações por medo (sair, trabalhar, socializar)\n🔴 Os sintomas físicos são frequentes (tontura, falta de ar, coração acelerado)\n🔴 Você usa álcool ou outras substâncias para aliviar a ansiedade\n🔴 Tem pensamentos de se machucar\n🔴 A qualidade do seu sono está comprometida há semanas\n\nONDE BUSCAR AJUDA:\n• CAPS (Centro de Atenção Psicossocial) — gratuito\n• UBS (Unidade Básica de Saúde)\n• Psicólogos pelo CRPSP (muitos com valores acessíveis)\n• CVV: 188 (apoio emocional 24h)\n\n💜 Você merece se sentir bem. Pedir ajuda é o primeiro passo.`
+  }
+];
+
+const HUMOR_COLORS = {
+  'Muito mal': '#e05fa0',
+  'Pra baixo': '#9b7de8',
+  'Mais ou menos': '#b0b0d8',
+  'Bem': '#7de8b0',
+  'Ótima': '#f4e04f'
+};
+
+const HUMOR_EMOJIS = {
+  'Muito mal': '😰',
+  'Pra baixo': '😔',
+  'Mais ou menos': '😐',
+  'Bem': '😊',
+  'Ótima': '🤩'
+};
+
+// ============ STATE ============
+let currentPage = 'inicio';
+let breathRunning = false;
+let breathInterval = null;
+let breathPhaseIdx = 0;
+let breathCounter = 0;
+const BREATH_PHASES = [
+  { name: 'Inspire', label: 'Encha os pulmões', duration: 4, class: 'inhale' },
+  { name: 'Segure', label: 'Sinta o ar', duration: 2, class: 'hold' },
+  { name: 'Expire', label: 'Solte tudo...', duration: 4, class: 'exhale' }
+];
+
+// ============ NAVIGATION ============
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  currentPage = page;
+  if (page === 'inicio') renderWeek();
+  if (page === 'diario') renderDiaryHistory();
+  if (page === 'eu') renderStats();
+  if (page === 'exercicios') newTip();
+}
+
+// ============ MODALS ============
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ============ FRASES ============
+function loadFrase() {
+  const idx = Math.floor(Date.now() / 86400000) % FRASES.length;
+  document.getElementById('fraseText').textContent = FRASES[idx].text;
+  document.getElementById('fraseAuthor').textContent = FRASES[idx].author;
+}
+
+// ============ HUMOR ============
+function saveHumor(label, emoji) {
+  const record = { label, emoji, ts: new Date().toISOString() };
+  let history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
+  history.unshift(record);
+  if (history.length > 60) history = history.slice(0, 60);
+  localStorage.setItem('sos_humor_history', JSON.stringify(history));
+  localStorage.setItem('sos_last_humor', JSON.stringify(record));
+  updateHumorButtons(label);
+  showLastHumor(record);
+  renderWeek();
+}
+
+function updateHumorButtons(selected) {
+  document.querySelectorAll('.humor-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.key === selected);
+  });
+}
+
+function showLastHumor(record) {
+  const el = document.getElementById('lastHumorDisplay');
+  el.style.display = 'flex';
+  document.getElementById('lastHumorEmoji').textContent = record.emoji;
+  document.getElementById('lastHumorLabel').textContent = 'Sentindo-se: ' + record.label;
+  document.getElementById('lastHumorDate').textContent = formatDate(record.ts);
+}
+
+function loadLastHumor() {
+  const last = localStorage.getItem('sos_last_humor');
+  if (last) {
+    const r = JSON.parse(last);
+    showLastHumor(r);
+    updateHumorButtons(r.label);
+  }
+}
+
+// ============ WEEK ============
+function renderWeek() {
+  const grid = document.getElementById('weekGrid');
+  const labels = document.getElementById('weekLabels');
+  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const weekData = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const key = d.toDateString();
+    const dayRecords = history.filter(h => new Date(h.ts).toDateString() === key);
+    weekData.push({ date: d, record: dayRecords[0] || null, label: days[d.getDay()] });
+  }
+
+  grid.innerHTML = '';
+  labels.innerHTML = '';
+
+  const humorHeights = { 'Muito mal': 20, 'Pra baixo': 35, 'Mais ou menos': 50, 'Bem': 65, 'Ótima': 80 };
+
+  weekData.forEach((day, i) => {
+    const h = day.record ? (humorHeights[day.record.label] || 30) : 8;
+    const color = day.record ? (HUMOR_COLORS[day.record.label] || '#ccc') : '#e0d8f5';
+    const isToday = i === 6;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'week-bar-wrap';
+    wrap.onclick = () => openDayModal(day);
+
+    const bar = document.createElement('div');
+    bar.className = 'week-bar';
+    bar.style.cssText = `height:${h}px;background:${color};${isToday?'box-shadow:0 0 8px '+color+'88;':''}`;
+
+    wrap.appendChild(bar);
+    grid.appendChild(wrap);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'week-day-label';
+    lbl.textContent = day.label;
+    if (isToday) lbl.style.color = 'var(--primary)';
+    labels.appendChild(lbl);
+  });
+}
+
+function openDayModal(day) {
+  document.getElementById('dayModalTitle').textContent = 'Sua semana 📊';
+  if (day.record) {
+    document.getElementById('dayModalEmoji').textContent = day.record.emoji;
+    document.getElementById('dayModalHumor').textContent = day.record.label;
+    document.getElementById('dayModalDate').textContent = formatDate(day.record.ts);
+  } else {
+    document.getElementById('dayModalEmoji').textContent = '🌱';
+    document.getElementById('dayModalHumor').textContent = 'Nenhum humor registrado';
+    document.getElementById('dayModalDate').textContent = day.date.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
+  }
+  openModal('dayModal');
+}
+
+// ============ DIARY ============
+function saveDiary() {
+  const text = document.getElementById('diaryText').value.trim();
+  if (!text) { alert('Escreva algo antes de salvar! 💜'); return; }
+  const entry = { text, ts: new Date().toISOString() };
+  localStorage.setItem('sos_diary', JSON.stringify(entry));
+  document.getElementById('diaryMeta').textContent = '✅ Salvo em ' + formatDate(entry.ts);
+}
+
+function clearDiary() {
+  if (confirm('Limpar o diário atual?')) {
+    document.getElementById('diaryText').value = '';
+    document.getElementById('diaryMeta').textContent = '';
+  }
+}
+
+function loadDiary() {
+  const saved = localStorage.getItem('sos_diary');
+  if (saved) {
+    const entry = JSON.parse(saved);
+    document.getElementById('diaryText').value = entry.text;
+    document.getElementById('diaryMeta').textContent = 'Última atualização: ' + formatDate(entry.ts);
+  }
+}
+
+function renderDiaryHistory() {
+  const container = document.getElementById('humorHistory');
+  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
+  if (!history.length) {
+    container.innerHTML = '<div style="color:var(--text3);font-size:0.85rem;font-weight:600;text-align:center;padding:16px 0;">Nenhum humor registrado ainda 🌱</div>';
+    return;
+  }
+  container.innerHTML = history.slice(0, 20).map(h => `
+    <div class="humor-history-item">
+      <span class="hi-emoji">${h.emoji}</span>
+      <span>${h.label}</span>
+      <span class="hi-date">${formatDate(h.ts)}</span>
+    </div>
+  `).join('');
+}
+
+// ============ BREATH ============
+function toggleBreath() {
+  if (breathRunning) { stopBreath(); } else { startBreath(); }
+}
+
+function startBreath() {
+  breathRunning = true;
+  breathPhaseIdx = 0;
+  document.getElementById('breathStartBtn').textContent = '⏹ Parar';
+  runBreathPhase();
+}
+
+function stopBreath() {
+  breathRunning = false;
+  clearTimeout(breathInterval);
+  const circle = document.getElementById('breathCircle');
+  circle.className = 'breath-circle';
+  document.getElementById('breathPhase').textContent = 'Pronta?';
+  document.getElementById('breathTimer').textContent = '—';
+  document.getElementById('breathLabel').textContent = 'Toque em Começar';
+  document.getElementById('breathStartBtn').textContent = '▶️ Começar';
+}
+
+function runBreathPhase() {
+  if (!breathRunning) return;
+  const phase = BREATH_PHASES[breathPhaseIdx % 3];
+  const circle = document.getElementById('breathCircle');
+  circle.className = 'breath-circle ' + phase.class;
+  document.getElementById('breathPhase').textContent = phase.name;
+  document.getElementById('breathLabel').textContent = phase.label;
+  let secs = phase.duration;
+  document.getElementById('breathTimer').textContent = secs;
+  const tick = setInterval(() => {
+    secs--;
+    document.getElementById('breathTimer').textContent = secs;
+    if (secs <= 0) {
+      clearInterval(tick);
+      if (breathRunning) {
+        breathPhaseIdx++;
+        setTimeout(runBreathPhase, 200);
       }
-      return hash;
     }
+  }, 1000);
+}
 
-    /* ====================
+// ============ TIPS ============
+function newTip() {
+  const idx = Math.floor(Math.random() * TIPS.length);
+  document.getElementById('tipText').textContent = TIPS[idx];
+}
+
+// ============ ARTICLES ============
+function openArticle(idx) {
+  const a = ARTICLES[idx];
+  document.getElementById('articleModalTitle').textContent = a.emoji + ' ' + a.title;
+  document.getElementById('articleModalBody').innerHTML = a.body.replace(/\n/g, '<br>');
+  openModal('articleModal');
+}
+
+// ============ EU ============
+function renderStats() {
+  const history = JSON.parse(localStorage.getItem('sos_humor_history') || '[]');
+  const diary = localStorage.getItem('sos_diary');
+  const el = document.getElementById('statsDisplay');
+  el.innerHTML = `
+    <div>📊 Humores registrados: <strong>${history.length}</strong></div>
+    <div>📖 Diário: <strong>${diary ? '✅ Com conteúdo' : '📭 Vazio'}</strong></div>
+    <div>📅 Primeiro registro: <strong>${history.length ? formatDate(history[history.length-1].ts) : '—'}</strong></div>
+  `;
+}
+
+function exportData() {
+  const data = {
+    humor_history: JSON.parse(localStorage.getItem('sos_humor_history') || '[]'),
+    diary: JSON.parse(localStorage.getItem('sos_diary') || 'null'),
+    exported_at: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'sos-eficiencia-dados.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function confirmReset() {
+  if (confirm('⚠️ Tem certeza? Todos os dados serão apagados permanentemente.')) {
+    localStorage.removeItem('sos_humor_history');
+    localStorage.removeItem('sos_last_humor');
+    localStorage.removeItem('sos_diary');
+    alert('✅ Dados resetados. Que começo novo 🌱');
+    location.reload();
+  }
+}
+
+// ============ SOS ============
+function callCVV() { window.location.href = 'tel:188'; }
+
+// ============ UTILS ============
+function formatDate(ts) {
+  const d = new Date(ts);
+  return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'2-digit' }) +
+    ' às ' + d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ============ INIT ============
+loadFrase();
+loadLastHumor();
+renderWeek();
+loadDiary();
+newTip();
+</script>
+</body>
+</html>
