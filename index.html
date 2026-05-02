@@ -2,8 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>S.O.S Eficiência 💜</title>
-  <style>
+  <title>S.O.S Eficiência 💜 | Projeto Desafio Liga Jovem</title>  <style>
     :root{
       --bg:#f6f3ff;
       --card:#ffffff;
@@ -14,343 +13,467 @@
       --border:#e9e6ff;
       --shadow: 0 12px 30px rgba(30, 20, 70, 0.10);
       --radius:22px;
-    }*{box-sizing:border-box; margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
+    }
 
-body{
-  background: linear-gradient(180deg, #f9f7ff 0%, #f0ecff 100%);
-  color:var(--text);
-  min-height:100vh;
-}
+    *{box-sizing:border-box; margin:0; padding:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;}
 
-header{
-  padding: 28px 18px 18px;
-  max-width:1100px;
-  margin:auto;
-}
+    body{
+      background: linear-gradient(180deg, #f9f7ff 0%, #f0ecff 100%);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
 
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
+    /* FUNDO ANIMADO */
+    #bgCanvas{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+    }
 
-.logo{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
+    .overlay{
+      position:fixed;
+      inset:0;
+      background: radial-gradient(circle at top, rgba(140, 92, 255, 0.10), transparent 60%),
+                  radial-gradient(circle at bottom, rgba(111, 107, 216, 0.12), transparent 55%);
+      z-index:-1;
+      pointer-events:none;
+    }
 
-.logo h1{
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:-0.5px;
-}
+    header{
+      padding: 28px 18px 18px;
+      max-width:1100px;
+      margin:auto;
+    }
 
-.logo p{
-  font-size:14px;
-  color:var(--muted);
-  font-weight:500;
-}
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
 
-.sos-btn{
-  border:none;
-  background: #fff;
-  border:1px solid var(--border);
-  padding:10px 16px;
-  border-radius:999px;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  transition:0.2s;
-}
+    .logo{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
 
-.sos-btn:hover{transform:translateY(-1px);}
+    .logo h1{
+      font-size:28px;
+      font-weight:900;
+      letter-spacing:-0.5px;
+    }
 
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding: 0 18px 100px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
+    .logo p{
+      font-size:14px;
+      color:var(--muted);
+      font-weight:600;
+    }
 
-.banner{
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
-  color:white;
-  padding: 26px 22px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  position:relative;
-  overflow:hidden;
-}
+    .sos-btn{
+      border:none;
+      background: #fff;
+      border:1px solid var(--border);
+      padding:10px 16px;
+      border-radius:999px;
+      font-weight:900;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      transition:0.2s;
+    }
 
-.banner::after{
-  content:"";
-  position:absolute;
-  right:-80px;
-  top:-80px;
-  width:200px;
-  height:200px;
-  border-radius:50%;
-  background: rgba(255,255,255,0.18);
-}
+    .sos-btn:hover{transform:translateY(-1px);}
 
-.banner small{
-  font-weight:700;
-  opacity:0.9;
-  letter-spacing:1px;
-}
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding: 0 18px 120px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
 
-.banner h2{
-  margin-top:10px;
-  font-size:22px;
-  font-weight:800;
-  max-width:560px;
-  line-height:1.2;
-}
+    .banner{
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
+      color:white;
+      padding: 26px 22px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:18px;
-}
+    .banner::after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:200px;
+      height:200px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.18);
+    }
 
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: 0 10px 24px rgba(30, 20, 70, 0.06);
-}
+    .banner small{
+      font-weight:900;
+      opacity:0.9;
+      letter-spacing:1px;
+    }
 
-.card h3{
-  font-size:18px;
-  font-weight:800;
-  margin-bottom:6px;
-}
+    .banner h2{
+      margin-top:10px;
+      font-size:22px;
+      font-weight:900;
+      max-width:560px;
+      line-height:1.2;
+    }
 
-.card p{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.4;
-}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+    }
 
-.mood{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-  flex-wrap:wrap;
-}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(30, 20, 70, 0.06);
+      backdrop-filter: blur(6px);
+    }
 
-.mood button{
-  flex:1;
-  min-width:110px;
-  border:1px solid var(--border);
-  background:#faf9ff;
-  border-radius:16px;
-  padding:10px 10px;
-  cursor:pointer;
-  transition:0.2s;
-  font-weight:700;
-  font-size:13px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
+    .card h3{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:6px;
+    }
 
-.mood button:hover{
-  transform: translateY(-2px);
-  border-color:#c9c4ff;
-}
+    .card p{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
 
-.week{
-  margin-top:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:12px;
-}
+    .mood{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
 
-.bar{
-  width:14px;
-  height:80px;
-  background:#f2efff;
-  border-radius:999px;
-  position:relative;
-  overflow:hidden;
-}
+    .mood button{
+      flex:1;
+      min-width:110px;
+      border:1px solid var(--border);
+      background:#faf9ff;
+      border-radius:16px;
+      padding:10px 10px;
+      cursor:pointer;
+      transition:0.2s;
+      font-weight:900;
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
 
-.bar .fill{
-  position:absolute;
-  bottom:0;
-  width:100%;
-  height:75%;
-  background: linear-gradient(180deg, #57d4a0 0%, #2fb57e 100%);
-  border-radius:999px;
-}
+    .mood button:hover{
+      transform: translateY(-2px);
+      border-color:#c9c4ff;
+    }
 
-.days{
-  display:flex;
-  gap:18px;
-  align-items:flex-end;
-}
+    .mood button.active{
+      border-color: #8a5cff;
+      background: #f0ebff;
+    }
 
-.days span{
-  font-size:12px;
-  color:#888;
-  font-weight:700;
-}
+    .week{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+    }
 
-.shortcuts{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:18px;
-  margin-top:14px;
-}
+    .bars{
+      display:flex;
+      gap:12px;
+      align-items:flex-end;
+    }
 
-.shortcut{
-  padding:16px;
-  border-radius:20px;
-  border:1px solid var(--border);
-  background: linear-gradient(180deg, #ffffff 0%, #f7f6ff 100%);
-  cursor:pointer;
-  transition:0.2s;
-}
+    .bar{
+      width:12px;
+      height:70px;
+      background:#f2efff;
+      border-radius:999px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid #ebe7ff;
+    }
 
-.shortcut:hover{transform:translateY(-2px);}
+    .bar .fill{
+      position:absolute;
+      bottom:0;
+      width:100%;
+      height:30%;
+      background: linear-gradient(180deg, #57d4a0 0%, #2fb57e 100%);
+      border-radius:999px;
+      transition:0.35s;
+    }
 
-.shortcut .icon{
-  width:42px;
-  height:42px;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:20px;
-  font-weight:900;
-  background:#ece9ff;
-  color:#4c47c9;
-  margin-bottom:10px;
-}
+    .days{
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      margin-top:10px;
+    }
 
-.shortcut h4{
-  font-size:16px;
-  font-weight:900;
-  margin-bottom:2px;
-}
+    .days span{
+      font-size:12px;
+      color:#888;
+      font-weight:900;
+      width:12px;
+      text-align:center;
+    }
 
-.shortcut p{
-  font-size:13px;
-  color:var(--muted);
-}
+    .shortcuts{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      margin-top:14px;
+    }
 
-footer{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  border-top:1px solid var(--border);
-  padding:12px 10px;
-  display:flex;
-  justify-content:space-around;
-  z-index:10;
-}
+    .shortcut{
+      padding:16px;
+      border-radius:20px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f6ff 100%);
+      cursor:pointer;
+      transition:0.2s;
+    }
 
-footer a{
-  text-decoration:none;
-  color:#6c6c7c;
-  font-weight:700;
-  font-size:12px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-}
+    .shortcut:hover{transform:translateY(-2px);}
 
-footer a.active{color:var(--primary2);}
+    .shortcut .icon{
+      width:42px;
+      height:42px;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      font-weight:900;
+      background:#ece9ff;
+      color:#4c47c9;
+      margin-bottom:10px;
+    }
 
-.dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:transparent;
-}
+    .shortcut h4{
+      font-size:16px;
+      font-weight:900;
+      margin-bottom:2px;
+    }
 
-footer a.active .dot{background:var(--primary2);}
+    .shortcut p{
+      font-size:13px;
+      color:var(--muted);
+    }
 
-@media (max-width: 820px){
-  .grid{grid-template-columns:1fr;}
-  .shortcuts{grid-template-columns:1fr 1fr;}
-}
+    .page{display:none;}
+    .page.active{display:block; animation:fadeIn 0.2s ease;}
 
-@media (max-width: 420px){
-  .shortcuts{grid-template-columns:1fr;}
-  .logo h1{font-size:24px;}
-}
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(8px);} 
+      to{opacity:1; transform:translateY(0);} 
+    }
 
-.modal{
-  position:fixed;
-  inset:0;
-  background: rgba(0,0,0,0.35);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  z-index:999;
-}
+    footer{
+      position:fixed;
+      bottom:0;
+      left:0;
+      right:0;
+      background:rgba(255,255,255,0.85);
+      border-top:1px solid var(--border);
+      padding:12px 10px;
+      display:flex;
+      justify-content:space-around;
+      z-index:10;
+      backdrop-filter: blur(10px);
+    }
 
-.modal.active{display:flex;}
+    footer button{
+      border:none;
+      background:transparent;
+      color:#6c6c7c;
+      font-weight:900;
+      font-size:12px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      cursor:pointer;
+    }
 
-.modal-box{
-  background:#fff;
-  border-radius:22px;
-  padding:18px;
-  width:100%;
-  max-width:460px;
-  box-shadow: var(--shadow);
-  border:1px solid var(--border);
-}
+    footer button.active{color:var(--primary2);}
 
-.modal-box h3{
-  font-size:18px;
-  font-weight:900;
-  margin-bottom:8px;
-}
+    .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:transparent;
+    }
 
-.modal-box p{
-  font-size:14px;
-  color:var(--muted);
-  line-height:1.4;
-}
+    footer button.active .dot{background:var(--primary2);}
 
-.modal-actions{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-}
+    .modal{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,0.35);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:999;
+    }
 
-.modal-actions button{
-  flex:1;
-  border:none;
-  padding:12px;
-  border-radius:16px;
-  font-weight:800;
-  cursor:pointer;
-}
+    .modal.active{display:flex;}
 
-.btn-primary{background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%); color:#fff;}
-.btn-outline{background:#f7f6ff; color:#4b47c8; border:1px solid var(--border);}
+    .modal-box{
+      background:#fff;
+      border-radius:22px;
+      padding:18px;
+      width:100%;
+      max-width:520px;
+      box-shadow: var(--shadow);
+      border:1px solid var(--border);
+    }
 
-  </style>
-</head>
-<body>  <header>
+    .modal-box h3{
+      font-size:18px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .modal-box p{
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .modal-actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+
+    .modal-actions button{
+      flex:1;
+      border:none;
+      padding:12px;
+      border-radius:16px;
+      font-weight:900;
+      cursor:pointer;
+      min-width:140px;
+    }
+
+    .btn-primary{background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%); color:#fff;}
+    .btn-outline{background:#f7f6ff; color:#4b47c8; border:1px solid var(--border);}
+
+    textarea{
+      width:100%;
+      min-height:160px;
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      outline:none;
+      font-size:14px;
+      resize:none;
+      margin-top:10px;
+      background:#fbfaff;
+      font-weight:600;
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
+      margin-top:12px;
+      flex-wrap:wrap;
+    }
+
+    .row button{
+      border:none;
+      border-radius:16px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-weight:900;
+      flex:1;
+      min-width:160px;
+    }
+
+    .danger{background:#ffe9ef; color:#c21f52; border:1px solid #ffd1df;}
+
+    .list{
+      margin-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .item{
+      padding:14px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      transition:0.2s;
+    }
+
+    .item:hover{transform:translateY(-1px);}
+
+    .item h4{font-size:14px; font-weight:900; margin-bottom:6px;}
+    .item p{font-size:13px; color:var(--muted);}
+
+    .badge{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:12px;
+      margin-top:10px;
+      background:#f1ecff;
+      border:1px solid #e3dcff;
+      color:#4b47c8;
+    }
+
+    .timer{
+      font-size:36px;
+      font-weight:1000;
+      letter-spacing:1px;
+      margin-top:12px;
+      color:#4b47c8;
+    }
+
+    @media (max-width: 820px){
+      .grid{grid-template-columns:1fr;}
+      .shortcuts{grid-template-columns:1fr 1fr;}
+    }
+
+    @media (max-width: 420px){
+      .shortcuts{grid-template-columns:1fr;}
+      .logo h1{font-size:24px;}
+    }
+
+  </style></head>
+<body><canvas id="bgCanvas"></canvas>
+
+  <div class="overlay"></div>  <header>
     <div class="topbar">
       <div class="logo">
         <h1>S.O.S Eficiência 💜</h1>
@@ -358,118 +481,235 @@ footer a.active .dot{background:var(--primary2);}
       </div><button class="sos-btn" onclick="openSOS()">💜 SOS</button>
 </div>
 
-  </header>  <main class="container"><section class="banner">
-  <small>FRASE DO DIA</small>
-  <h2>Permita-se um momento só seu hoje.</h2>
-</section>
+  </header>  <main class="container"><!-- PAGINA HOME -->
+<section class="page active" id="page-home">
 
-<section class="grid">
-  <div class="card">
-    <h3>Como está hoje?</h3>
-    <p>Toque para registrar seu humor e acompanhar sua evolução emocional.</p>
+  <section class="banner">
+    <small>FRASE DO DIA</small>
+    <h2 id="fraseDia">Permita-se um momento só seu hoje.</h2>
+  </section>
 
-    <div class="mood">
-      <button onclick="setMood('Muito mal')">😞 Muito mal</button>
-      <button onclick="setMood('Pra baixo')">😔 Pra baixo</button>
-      <button onclick="setMood('Mais ou menos')">😐 Mais ou menos</button>
-      <button onclick="setMood('Bem')">🙂 Bem</button>
-      <button onclick="setMood('Ótima')">😊 Ótima</button>
-    </div>
+  <section class="grid">
+    <div class="card">
+      <h3>Como está hoje?</h3>
+      <p>Toque para registrar seu humor e acompanhar sua evolução emocional.</p>
 
-    <p id="moodText" style="margin-top:12px; font-weight:800; color:#4b47c8;"></p>
-  </div>
-
-  <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-      <h3>Sua semana</h3>
-      <a href="#" style="color:#6f6bd8; font-weight:900; text-decoration:none;">Ver mais</a>
-    </div>
-
-    <div class="week">
-      <div class="days">
-        <span>S</span>
-        <span>D</span>
-        <span>S</span>
-        <span>T</span>
-        <span>Q</span>
-        <span>Q</span>
-        <span>S</span>
+      <div class="mood" id="moodButtons">
+        <button onclick="setMood(1,'Muito mal')">😞 Muito mal</button>
+        <button onclick="setMood(2,'Pra baixo')">😔 Pra baixo</button>
+        <button onclick="setMood(3,'Mais ou menos')">😐 Mais ou menos</button>
+        <button onclick="setMood(4,'Bem')">🙂 Bem</button>
+        <button onclick="setMood(5,'Ótima')">😊 Ótima</button>
       </div>
 
-      <div class="bar" title="Termômetro emocional">
-        <div class="fill"></div>
+      <p id="moodText" style="margin-top:12px; font-weight:900; color:#4b47c8;"></p>
+      <span class="badge" id="lastMoodBadge">Nenhum humor registrado ainda.</span>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+        <h3>Sua semana</h3>
+        <a href="#" onclick="openWeekDetails(); return false;" style="color:#6f6bd8; font-weight:900; text-decoration:none;">Ver mais</a>
+      </div>
+
+      <div class="week">
+        <div>
+          <div class="bars" id="weekBars"></div>
+          <div class="days">
+            <span>S</span>
+            <span>D</span>
+            <span>S</span>
+            <span>T</span>
+            <span>Q</span>
+            <span>Q</span>
+            <span>S</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; margin-top:10px;">
+        <p style="font-weight:900;">Termômetro emocional</p>
+        <p style="font-weight:1000; color:#6f6bd8;" id="weekStatus">Sua semana está começando 💜</p>
       </div>
     </div>
+  </section>
 
-    <div style="display:flex; justify-content:space-between; margin-top:10px;">
-      <p style="font-weight:800;">Termômetro emocional</p>
-      <p style="font-weight:900; color:#6f6bd8;">Sua semana brilhou ✨</p>
+  <section class="card">
+    <h3>Sobre o projeto</h3>
+    <p>
+      O <b>S.O.S Eficiência 💜</b> é um projeto criado para apoiar meninas e mulheres que enfrentam ansiedade,
+      trazendo acolhimento, informação, ferramentas de respiração e um espaço seguro para registrar sentimentos.
+    </p>
+    <p style="margin-top:10px;">
+      <b>Projeto:</b> Desafio Liga Jovem • <b>Objetivo:</b> cuidado emocional e apoio diário.
+    </p>
+  </section>
+
+  <section class="card">
+    <h3>Atalhos</h3>
+    <div class="shortcuts">
+      <div class="shortcut" onclick="openPage('page-exercicios')">
+        <div class="icon">🌬️</div>
+        <h4>Respirar</h4>
+        <p>Exercício rápido (3 min)</p>
+      </div>
+
+      <div class="shortcut" onclick="openPage('page-diario')">
+        <div class="icon">✍️</div>
+        <h4>Escrever</h4>
+        <p>Espaço seguro</p>
+      </div>
+
+      <div class="shortcut" onclick="openPage('page-biblioteca')">
+        <div class="icon">📚</div>
+        <h4>Biblioteca</h4>
+        <p>Informação e cuidado</p>
+      </div>
+
+      <div class="shortcut" onclick="openSOS()">
+        <div class="icon">💬</div>
+        <h4>Ajuda</h4>
+        <p>Suporte e orientação</p>
+      </div>
     </div>
-  </div>
+  </section>
+
 </section>
 
-<section class="card">
-  <h3>Sobre o projeto</h3>
-  <p>
-    O <b>S.O.S Eficiência 💜</b> é um projeto criado para apoiar meninas e mulheres que enfrentam ansiedade,
-    trazendo acolhimento, informação, ferramentas de respiração e um espaço seguro para registrar sentimentos.
-  </p>
-  <p style="margin-top:10px;">
-    <b>Projeto:</b> Desafio Liga Jovem • <b>Objetivo:</b> cuidado emocional e apoio diário.
-  </p>
+<!-- PAGINA DIARIO -->
+<section class="page" id="page-diario">
+  <section class="card">
+    <h3>📖 Diário emocional</h3>
+    <p>Escreva como você se sente. Isso fica salvo no seu celular/PC (LocalStorage).</p>
+
+    <textarea id="diaryText" placeholder="Escreva aqui..."></textarea>
+
+    <div class="row">
+      <button class="btn-primary" onclick="saveDiary()">Salvar</button>
+      <button class="btn-outline" onclick="clearDiary()">Limpar</button>
+    </div>
+
+    <p style="margin-top:10px; font-weight:900; color:#4b47c8;" id="diaryStatus"></p>
+
+    <div style="margin-top:14px;">
+      <h3>📌 Histórico de humores</h3>
+      <p>Seu humor registrado nos últimos dias.</p>
+
+      <div class="list" id="moodHistory"></div>
+    </div>
+  </section>
 </section>
 
-<section class="card">
-  <h3>Atalhos</h3>
-  <div class="shortcuts">
-    <div class="shortcut" onclick="alert('Respiração guiada (demo).')">
-      <div class="icon">🌬️</div>
-      <h4>Respirar</h4>
-      <p>Exercício rápido (3 min)</p>
+<!-- PAGINA EXERCICIOS -->
+<section class="page" id="page-exercicios">
+  <section class="card">
+    <h3>🌬️ Exercício de respiração</h3>
+    <p>Respire com calma: inspire 4s • segure 2s • expire 4s.</p>
+
+    <div class="timer" id="breathTimer">00:00</div>
+    <p style="margin-top:6px; font-weight:1000; color:#6f6bd8;" id="breathPhase">Pronta para começar 💜</p>
+
+    <div class="row">
+      <button class="btn-primary" onclick="startBreathing()">Começar</button>
+      <button class="btn-outline" onclick="stopBreathing()">Parar</button>
     </div>
 
-    <div class="shortcut" onclick="alert('Diário emocional (demo).')">
-      <div class="icon">✍️</div>
-      <h4>Escrever</h4>
-      <p>Espaço seguro</p>
+    <p style="margin-top:12px; font-size:13px;">
+      Dica: se sentir ansiedade forte, tente repetir por 3 minutos.
+    </p>
+  </section>
+
+  <section class="card">
+    <h3>✨ Relaxamento rápido</h3>
+    <p>Toque para receber uma dica rápida.</p>
+
+    <div class="row">
+      <button class="btn-outline" onclick="randomTip()">Gerar dica</button>
     </div>
 
-    <div class="shortcut" onclick="alert('Conteúdos e dicas (demo).')">
-      <div class="icon">📚</div>
-      <h4>Biblioteca</h4>
-      <p>Informação e cuidado</p>
+    <p style="margin-top:12px; font-weight:900; color:#4b47c8;" id="tipBox"></p>
+  </section>
+</section>
+
+<!-- PAGINA BIBLIOTECA -->
+<section class="page" id="page-biblioteca">
+  <section class="card">
+    <h3>📚 Biblioteca</h3>
+    <p>Conteúdos educativos sobre ansiedade, autocuidado e apoio emocional.</p>
+
+    <div class="list">
+      <div class="item" onclick="openArticle(1)">
+        <h4>O que é ansiedade?</h4>
+        <p>Entenda sintomas, causas e como reconhecer.</p>
+      </div>
+
+      <div class="item" onclick="openArticle(2)">
+        <h4>Crise de ansiedade: o que fazer?</h4>
+        <p>Passo a passo para se acalmar com segurança.</p>
+      </div>
+
+      <div class="item" onclick="openArticle(3)">
+        <h4>Autocuidado emocional</h4>
+        <p>Pequenas práticas para fortalecer sua mente.</p>
+      </div>
+
+      <div class="item" onclick="openArticle(4)">
+        <h4>Quando pedir ajuda profissional?</h4>
+        <p>Psicólogo, psiquiatra e rede de apoio.</p>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- PAGINA PERFIL -->
+<section class="page" id="page-eu">
+  <section class="card">
+    <h3>👤 Meu perfil</h3>
+    <p>Configurações e informações do seu projeto.</p>
+
+    <div style="margin-top:12px;">
+      <p><b>Projeto:</b> S.O.S Eficiência 💜</p>
+      <p><b>Foco:</b> Apoio à ansiedade feminina</p>
+      <p><b>Objetivo:</b> Acolhimento, informação e cuidado</p>
+      <p><b>Competição:</b> Desafio Liga Jovem</p>
     </div>
 
-    <div class="shortcut" onclick="alert('Contato e ajuda (demo).')">
-      <div class="icon">💬</div>
-      <h4>Ajuda</h4>
-      <p>Suporte e orientação</p>
+    <div class="row" style="margin-top:14px;">
+      <button class="btn-outline" onclick="resetAllData()">Resetar dados do app</button>
+      <button class="btn-primary" onclick="exportData()">Exportar dados</button>
     </div>
-  </div>
+
+    <p style="margin-top:12px; font-size:13px; color:var(--muted);">
+      Seus dados são armazenados apenas no seu dispositivo usando LocalStorage.
+    </p>
+  </section>
 </section>
 
   </main>  <footer>
-    <a class="active" href="#">
+    <button class="active" id="btn-home" onclick="openPage('page-home')">
       <div class="dot"></div>
       🏠 Início
-    </a>
-    <a href="#">
-      <div class="dot"></div>
-      📖 Diário
-    </a>
-    <a href="#">
-      <div class="dot"></div>
-      🌬️ Exercícios
-    </a>
-    <a href="#">
-      <div class="dot"></div>
-      📚 Biblioteca
-    </a>
-    <a href="#">
-      <div class="dot"></div>
-      👤 Eu
-    </a>
-  </footer>  <div class="modal" id="modalSOS">
+    </button><button id="btn-diario" onclick="openPage('page-diario')">
+  <div class="dot"></div>
+  📖 Diário
+</button>
+
+<button id="btn-exercicios" onclick="openPage('page-exercicios')">
+  <div class="dot"></div>
+  🌬️ Exercícios
+</button>
+
+<button id="btn-biblioteca" onclick="openPage('page-biblioteca')">
+  <div class="dot"></div>
+  📚 Biblioteca
+</button>
+
+<button id="btn-eu" onclick="openPage('page-eu')">
+  <div class="dot"></div>
+  👤 Eu
+</button>
+
+  </footer>  <!-- MODAL SOS -->  <div class="modal" id="modalSOS">
     <div class="modal-box">
       <h3>💜 SOS - Apoio imediato</h3>
       <p>
@@ -484,17 +724,65 @@ footer a.active .dot{background:var(--primary2);}
   </div>
 </div>
 
+  </div>  <!-- MODAL ARTIGOS -->  <div class="modal" id="modalArticle">
+    <div class="modal-box">
+      <h3 id="articleTitle">Título</h3>
+      <p id="articleText">Texto...</p><div class="modal-actions">
+    <button class="btn-primary" onclick="closeArticle()">Fechar</button>
+  </div>
+</div>
+
   </div>  <script>
-    function setMood(mood){
-      document.getElementById('moodText').innerText = "Humor registrado: " + mood + " 💜";
+    /* ============================
+       SISTEMA DE PAGINAS
+    ============================ */
+
+    function openPage(pageId){
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+
+      // botões do footer
+      const buttons = ['home','diario','exercicios','biblioteca','eu'];
+      buttons.forEach(id => document.getElementById('btn-'+id).classList.remove('active'));
+
+      if(pageId === 'page-home') document.getElementById('btn-home').classList.add('active');
+      if(pageId === 'page-diario') document.getElementById('btn-diario').classList.add('active');
+      if(pageId === 'page-exercicios') document.getElementById('btn-exercicios').classList.add('active');
+      if(pageId === 'page-biblioteca') document.getElementById('btn-biblioteca').classList.add('active');
+      if(pageId === 'page-eu') document.getElementById('btn-eu').classList.add('active');
+
+      // atualizações automáticas
+      if(pageId === 'page-diario') renderMoodHistory();
     }
 
-    function openSOS(){
-      document.getElementById('modalSOS').classList.add('active');
+    /* ============================
+       FRASE DO DIA
+    ============================ */
+
+    const frases = [
+      "Permita-se um momento só seu hoje.",
+      "Você não precisa ser forte o tempo todo.",
+      "Respire. Tudo passa.",
+      "Seu valor não depende da sua produtividade.",
+      "Você merece paz, mesmo nos dias difíceis.",
+      "Uma pausa também é progresso.",
+      "Você está fazendo o melhor que pode."
+    ];
+
+    function updateFrase(){
+      const hoje = new Date().toDateString();
+      const index = Math.abs(hashCode(hoje)) % frases.length;
+      document.getElementById('fraseDia').innerText = frases[index];
     }
 
-    function closeSOS(){
-      document.getElementById('modalSOS').classList.remove('active');
+    function hashCode(str){
+      let hash = 0;
+      for(let i=0; i<str.length; i++){
+        hash = ((hash<<5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash;
     }
-  </script></body>
-</html>
+
+    /* ====================
