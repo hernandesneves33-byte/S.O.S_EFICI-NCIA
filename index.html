@@ -26,18 +26,50 @@
     --radius-sm: 12px;
     --tab-h: 72px;
     --top-h: 60px;
+    /* Custom scrollbar width */
+    --scrollbar-w: 4px;
+    --scrollbar-track: rgba(111,107,216,0.08);
+    --scrollbar-thumb: rgba(111,107,216,0.5);
+    --scrollbar-thumb-hover: rgba(179,157,255,0.8);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
+  /* =====================================================
+     PULL-TO-REFRESH BLOQUEIO TOTAL — Android WebView
+     Camada 1: CSS overscroll-behavior (moderno)
+     Camada 2: touch-action (bloqueia gestos nativos)
+     Camada 3: JS touchmove preventDefault (WebView legado)
+  ===================================================== */
+  html {
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
+    /* Bloqueia rubber-band scroll iOS */
+    -webkit-overflow-scrolling: auto;
+    /* Impede que o WebView propague o gesto para o nativo */
+    touch-action: none;
+  }
+
+  body {
     height: 100%; width: 100%;
     background: var(--bg);
     color: var(--text);
     font-family: 'DM Sans', system-ui, sans-serif;
-    overflow: hidden;
-    touch-action: pan-y;
+    /* Bloqueia scroll no body — scroll fica só nas .page */
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
+    /* Bloqueia touch-action para pull-to-refresh do Android */
+    touch-action: none;
     -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Permite seleção de texto apenas no conteúdo editorial */
+  .modal-body, .entry-text, .diary-textarea {
+    -webkit-user-select: text;
+    user-select: text;
   }
 
   #canvas-bg {
@@ -50,6 +82,8 @@
     height: 100vh; width: 100%;
     display: flex; flex-direction: column;
     max-width: 480px; margin: 0 auto;
+    /* Garante que o app nunca propague scroll para o body */
+    overflow: hidden;
   }
 
   /* ====== SCROLL PROGRESS BAR ====== */
@@ -101,6 +135,7 @@
     box-shadow: 0 0 20px rgba(232,93,138,0.4);
     transition: all 0.2s;
     animation: pulse-sos 2.5s ease-in-out infinite;
+    touch-action: manipulation;
   }
 
   .sos-btn.crisis { animation: pulse-sos-fast 1s ease-in-out infinite; box-shadow: 0 0 30px rgba(232,93,138,0.7); }
@@ -126,21 +161,93 @@
     flex: 1; overflow: hidden; position: relative;
   }
 
+  /* =====================================================
+     PÁGINA COM SCROLL PERSONALIZADO
+     touch-action: pan-y  → permite scroll vertical DENTRO
+     da .page sem propagar para o body/WebView
+     overscroll-behavior: contain → BLOQUEIA pull-to-refresh
+     mesmo quando no topo da página
+  ===================================================== */
   .page {
     position: absolute; inset: 0;
-    overflow-y: auto; overflow-x: hidden;
+    overflow-y: scroll;   /* scroll (não auto) garante scroll em WebView */
+    overflow-x: hidden;
     padding: 0 20px calc(var(--tab-h) + 20px);
     opacity: 0; pointer-events: none;
     transform: translateY(12px);
     transition: opacity 0.3s ease, transform 0.3s ease;
-    scrollbar-width: none;
+    scrollbar-width: none; /* Firefox */
+    /* ↓↓↓ CHAVE: bloqueia pull-to-refresh e rubber-band ↓↓↓ */
+    overscroll-behavior: contain;
+    overscroll-behavior-y: contain;
+    /* Permite gesture de scroll vertical dentro da div */
+    touch-action: pan-y;
+    /* Melhora suavidade do scroll em Android */
+    -webkit-overflow-scrolling: touch;
+    /* Evita bounce extra no iOS */
+    will-change: scroll-position;
   }
-  .page::-webkit-scrollbar { display: none; }
+  .page::-webkit-scrollbar { display: none; } /* Chrome/WebView */
   .page.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 
-  /* Page inner scroll padding */
   .page-inner {
     padding-top: 20px;
+    /* Espaço para a scrollbar flutuante não sobrepor conteúdo */
+    padding-right: 12px;
+  }
+
+  /* =====================================================
+     SCROLLBAR FLUTUANTE PERSONALIZADA
+     Aparece à direita da página ativa, semi-transparente,
+     desaparece quando não há scroll, draggable via JS
+  ===================================================== */
+  .custom-scrollbar {
+    position: absolute;
+    right: 3px;
+    top: 0;
+    bottom: var(--tab-h);
+    width: 20px; /* área de toque maior que o visual */
+    z-index: 30;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .custom-scrollbar.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .scrollbar-track {
+    position: absolute;
+    right: 4px;
+    top: 8px;
+    bottom: 8px;
+    width: var(--scrollbar-w);
+    background: var(--scrollbar-track);
+    border-radius: 10px;
+  }
+
+  .scrollbar-thumb {
+    position: absolute;
+    right: 0;
+    width: var(--scrollbar-w);
+    min-height: 36px;
+    background: var(--scrollbar-thumb);
+    border-radius: 10px;
+    cursor: grab;
+    transition: background 0.2s, width 0.2s, right 0.2s;
+    box-shadow: 0 0 8px rgba(111,107,216,0.4);
+    touch-action: none; /* thumb usa ponteiro próprio */
+  }
+
+  .scrollbar-thumb:active,
+  .scrollbar-thumb.dragging {
+    background: var(--scrollbar-thumb-hover);
+    width: 6px;
+    right: -1px;
+    cursor: grabbing;
+    box-shadow: 0 0 14px rgba(179,157,255,0.6);
   }
 
   /* BOTTOM NAV */
@@ -163,6 +270,7 @@
     font-size: 0.6rem; font-weight: 500;
     letter-spacing: 0.03em; text-transform: uppercase;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
 
   .nav-btn .nav-icon { font-size: 1.3rem; transition: transform 0.2s; }
@@ -238,6 +346,7 @@
     transition: all 0.2s;
     font-size: 0.65rem; color: var(--text2);
     font-weight: 500;
+    touch-action: manipulation;
   }
 
   .emotion-btn .em { font-size: 1.6rem; display: block; }
@@ -248,10 +357,8 @@
     transform: scale(0.96);
   }
 
-  /* ====== WEEK CHART — ENHANCED ====== */
-  .week-chart-container {
-    position: relative;
-  }
+  /* WEEK CHART */
+  .week-chart-container { position: relative; }
 
   .week-chart {
     display: flex; justify-content: space-between;
@@ -279,6 +386,7 @@
     height: 100%;
     justify-content: flex-end;
     position: relative;
+    touch-action: manipulation;
   }
   .day-bar-wrap:active { opacity: 0.7; }
 
@@ -303,17 +411,6 @@
     background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
   }
 
-  .day-bar.pulse-anim {
-    animation: barPulse 0.5s ease-out;
-  }
-
-  @keyframes barPulse {
-    0% { transform: scaleX(1); }
-    30% { transform: scaleX(1.12); }
-    60% { transform: scaleX(0.95); }
-    100% { transform: scaleX(1); }
-  }
-
   .day-bar.today-bar {
     background: linear-gradient(to top, #8a5cff, #b39dff);
     box-shadow: 0 0 20px rgba(138,92,255,0.5);
@@ -325,8 +422,7 @@
   }
 
   .day-bar-wrap.today-wrap .day-label {
-    color: var(--purple3);
-    font-weight: 700;
+    color: var(--purple3); font-weight: 700;
   }
 
   .chart-tooltip {
@@ -368,6 +464,7 @@
     transition: all 0.2s;
     color: var(--text2); font-size: 0.8rem; font-weight: 500;
     text-align: left;
+    touch-action: manipulation;
   }
 
   .quick-btn .qi { font-size: 1.4rem; }
@@ -382,6 +479,8 @@
     display: flex; gap: 8px;
     overflow-x: auto; padding-bottom: 4px;
     scrollbar-width: none; margin-bottom: 16px;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
   }
   .exercise-tabs::-webkit-scrollbar { display: none; }
 
@@ -394,6 +493,7 @@
     font-size: 0.72rem; font-weight: 500;
     color: var(--text2); cursor: pointer;
     transition: all 0.2s; white-space: nowrap;
+    touch-action: manipulation;
   }
 
   .ex-tab.active {
@@ -429,6 +529,7 @@
     font-size: 0.8rem; font-weight: 600;
     padding: 10px 20px; cursor: pointer;
     transition: all 0.2s;
+    touch-action: manipulation;
   }
   .ex-start-btn:active { transform: scale(0.97); opacity: 0.9; }
 
@@ -500,6 +601,7 @@
     font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem; font-weight: 600;
     transition: all 0.2s;
+    touch-action: manipulation;
   }
   .ctrl-btn.primary {
     background: linear-gradient(135deg, var(--purple), var(--purple2));
@@ -507,7 +609,7 @@
   }
   .ctrl-btn:active { transform: scale(0.95); }
 
-  /* ====== DIARY — ENHANCED ====== */
+  /* DIARY */
   .diary-textarea {
     width: 100%; min-height: 140px;
     background: var(--card2);
@@ -518,11 +620,13 @@
     resize: none; outline: none;
     transition: border-color 0.2s;
     line-height: 1.6;
+    /* Textarea pode scrollar internamente sem pull-to-refresh */
+    touch-action: pan-y;
+    overscroll-behavior: contain;
   }
   .diary-textarea:focus { border-color: var(--purple); }
   .diary-textarea::placeholder { color: var(--text3); }
 
-  /* Char counter */
   .char-counter {
     text-align: right;
     font-size: 0.68rem;
@@ -532,7 +636,6 @@
   }
   .char-counter.has-text { color: var(--purple3); }
 
-  /* Auto-save indicator */
   .autosave-indicator {
     display: flex; align-items: center; gap: 6px;
     font-size: 0.7rem; color: var(--text3);
@@ -558,11 +661,11 @@
     padding: 14px; cursor: pointer;
     transition: all 0.2s;
     display: flex; align-items: center; justify-content: center; gap: 8px;
+    touch-action: manipulation;
   }
   .save-btn:active { opacity: 0.85; transform: scale(0.98); }
   .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  /* Entry cards */
   .diary-entry {
     background: var(--card);
     border: 1px solid var(--border);
@@ -599,6 +702,7 @@
     color: var(--text3); cursor: pointer;
     font-size: 0.75rem; padding: 4px 8px;
     border-radius: 6px; transition: all 0.2s;
+    touch-action: manipulation;
   }
   .entry-action:hover { color: var(--text); background: var(--card2); }
   .entry-action.delete:hover { color: #e85d8a; }
@@ -617,16 +721,15 @@
     color: var(--purple3); font-size: 0.72rem;
     cursor: pointer; padding: 4px 0;
     font-weight: 500;
+    touch-action: manipulation;
   }
 
-  /* Empty diary state */
   .diary-empty {
     text-align: center; padding: 32px 20px;
     color: var(--text3); font-size: 0.85rem;
   }
   .diary-empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
 
-  /* DIARY SEARCH */
   .diary-search {
     width: 100%;
     background: var(--card2);
@@ -649,6 +752,7 @@
     padding: 18px 20px; margin-bottom: 10px;
     cursor: pointer; transition: all 0.2s;
     display: flex; align-items: center; justify-content: space-between;
+    touch-action: manipulation;
   }
   .lib-card:active { transform: scale(0.98); border-color: var(--purple); }
 
@@ -701,6 +805,7 @@
     text-align: left; transition: all 0.2s;
     display: flex; align-items: center; gap: 10px;
     margin-bottom: 10px;
+    touch-action: manipulation;
   }
   .action-btn:active { transform: scale(0.98); border-color: var(--purple); }
   .danger-btn { color: #e85d8a; border-color: rgba(232,93,138,0.3); }
@@ -714,6 +819,7 @@
     justify-content: center;
     opacity: 0; pointer-events: none;
     transition: opacity 0.3s;
+    touch-action: none; /* bloqueia scroll por trás do modal */
   }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
 
@@ -727,6 +833,9 @@
     transition: transform 0.35s cubic-bezier(0.34,1.2,0.64,1);
     max-height: 80vh; overflow-y: auto;
     scrollbar-width: none;
+    /* Modal interno pode scrollar sem fechar */
+    overscroll-behavior: contain;
+    touch-action: pan-y;
   }
   .modal::-webkit-scrollbar { display: none; }
   .modal-overlay.open .modal { transform: translateY(0); }
@@ -753,6 +862,7 @@
     color: var(--text); font-family: 'DM Sans', sans-serif;
     font-size: 0.9rem; font-weight: 600;
     padding: 14px; cursor: pointer; transition: all 0.2s;
+    touch-action: manipulation;
   }
   .modal-close:active { opacity: 0.8; }
 
@@ -776,6 +886,7 @@
     padding: 16px; cursor: pointer;
     transition: all 0.2s; margin-bottom: 10px;
     display: flex; align-items: center; justify-content: center; gap: 8px;
+    touch-action: manipulation;
   }
   .call-btn:active { opacity: 0.85; transform: scale(0.98); }
 
@@ -828,6 +939,7 @@
     white-space: nowrap;
     max-width: calc(100vw - 40px);
     text-align: center;
+    pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -865,13 +977,92 @@
   .delay-3 { animation-delay: 0.15s; }
   .delay-4 { animation-delay: 0.2s; }
 
-  /* ====== MOOD LINE CHART ====== */
+  /* MOOD LINE CHART */
   .mood-line-chart {
     width: 100%; height: 60px; margin-top: 8px;
   }
 
-  .week-chart-wrap {
-    margin-bottom: 0;
+  .week-chart-wrap { margin-bottom: 0; }
+
+  /* =====================================================
+     FLOATING ACTION BUTTONS
+  ===================================================== */
+  .fab-group {
+    position: fixed;
+    right: 16px;
+    bottom: calc(var(--tab-h) + 16px);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  @media (min-width: 480px) {
+    .fab-group { right: calc(50% - 480px/2 + 16px); }
+  }
+
+  .fab-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(111,107,216,0.35);
+    background: rgba(19, 16, 43, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: var(--purple3);
+    font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(111,107,216,0.1), inset 0 1px 0 rgba(255,255,255,0.06);
+    transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease, opacity 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    opacity: 0.55;
+    touch-action: manipulation;
+  }
+
+  .fab-btn:hover, .fab-btn:focus-visible {
+    opacity: 1;
+    box-shadow: 0 6px 24px rgba(111,107,216,0.35), 0 0 0 1px rgba(111,107,216,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+
+  .fab-btn:active {
+    transform: scale(0.88); opacity: 1;
+    box-shadow: 0 2px 10px rgba(111,107,216,0.2), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .fab-btn.fab-top { opacity: 0; pointer-events: none; transform: translateY(6px); }
+  .fab-btn.fab-top.visible { opacity: 0.55; pointer-events: auto; transform: translateY(0); }
+  .fab-btn.fab-top.visible:hover, .fab-btn.fab-top.visible:focus-visible { opacity: 1; }
+
+  .fab-btn.fab-reload.spinning .fab-icon { animation: spinOnce 0.5s ease-in-out; }
+
+  @keyframes spinOnce {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  .fab-btn[data-tip]::before {
+    content: attr(data-tip);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%; transform: translateY(-50%);
+    background: rgba(19, 16, 43, 0.95);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 5px 10px;
+    font-size: 0.68rem; font-family: 'DM Sans', sans-serif;
+    color: var(--text2); white-space: nowrap;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .fab-btn[data-tip]:hover::before { opacity: 1; }
+
+  .fab-icon {
+    line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-style: normal;
+    transition: transform 0.18s;
+    font-size: 1rem;
   }
 </style>
 </head>
@@ -890,7 +1081,7 @@
   </div>
 
   <!-- PAGES -->
-  <div class="pages">
+  <div class="pages" id="pages-container">
 
     <!-- HOME -->
     <div class="page active" id="page-home">
@@ -900,17 +1091,14 @@
           <span style="font-size:1.5rem">💜</span>
           <p>Percebemos que você está passando por um momento difícil. Você não está sozinho(a).</p>
         </div>
-
         <div class="quote-card fade-up">
           <p class="quote-text" id="quote-text">Carregando...</p>
           <p class="quote-author" id="quote-author"></p>
         </div>
-
         <div class="card fade-up delay-1">
           <div class="section-title">Como está hoje?</div>
           <div class="emotion-grid" id="emotion-grid"></div>
         </div>
-
         <div class="card fade-up delay-2 week-chart-wrap">
           <div class="section-title">Sua Semana</div>
           <div class="week-chart-container">
@@ -924,7 +1112,6 @@
           <svg class="mood-line-chart" id="mood-line-chart" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
           <div id="chart-legend" style="display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:10px;"></div>
         </div>
-
         <div class="fade-up delay-3">
           <div class="section-title">Atalhos Rápidos</div>
           <div class="quick-grid">
@@ -991,31 +1178,26 @@
           <div style="font-family:'DM Serif Display',serif;font-size:1.3rem;">Meu Espaço</div>
           <div style="font-size:0.8rem;color:var(--text3);margin-top:4px;">S.O.S Eficiência — Cuide-se</div>
         </div>
-
         <div class="card fade-up delay-1" style="margin-bottom:14px;">
           <div class="section-title">Meu Progresso</div>
           <div class="stat-grid" id="stat-grid"></div>
         </div>
-
         <div class="card fade-up delay-2">
           <div class="section-title">Conquistas</div>
           <div id="achievements-list"></div>
         </div>
-
         <div class="fade-up delay-3" style="margin-top:14px;">
           <div class="section-title">Dados</div>
           <button class="action-btn" onclick="exportData()">📤 Exportar meus dados (JSON)</button>
           <button class="action-btn danger-btn" onclick="resetData()">🗑️ Resetar todos os dados</button>
         </div>
-
         <div class="info-badge fade-up delay-4" style="margin-top:14px;">
           🔒 Seus dados ficam apenas no seu dispositivo.<br>Nunca compartilhamos suas informações.
         </div>
-
         <div class="card fade-up delay-4" style="margin-top:14px;">
           <div class="section-title">Equipe de Desenvolvimento</div>
           <div class="team-name"><div class="team-role">Orientador</div>Joe Garcia Lima de Morais</div>
-          <div class="team-name"><div class="team-role">Líder do Projeto & Desenvolvedor</div>Ernandes da Conceição Neves</div>
+          <div class="team-name"><div class="team-role">Líder do Projeto &amp; Desenvolvedor</div>Ernandes da Conceição Neves</div>
           <div class="team-name"><div class="team-role">Equipe de Apoio</div>Isnariane Pereira dos Santos</div>
           <div class="team-name">Nilmar das Neves Santos</div>
           <div class="team-name">Maria Iasmin Pires de Moraes</div>
@@ -1024,6 +1206,12 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- CUSTOM SCROLLBAR (flutuante, uma por página) -->
+  <div class="custom-scrollbar" id="custom-scrollbar">
+    <div class="scrollbar-track"></div>
+    <div class="scrollbar-thumb" id="scrollbar-thumb"></div>
   </div>
 
   <!-- BOTTOM NAV -->
@@ -1044,6 +1232,16 @@
       <span class="nav-icon">👤</span>Eu
     </button>
   </nav>
+</div>
+
+<!-- FLOATING ACTION BUTTONS -->
+<div class="fab-group" id="fab-group" aria-label="Navegação rápida">
+  <button class="fab-btn fab-top" id="fab-top" onclick="scrollPageTo('top')" data-tip="Ir ao topo" aria-label="Voltar ao topo" title="Ir ao topo">
+    <span class="fab-icon">↑</span>
+  </button>
+  <button class="fab-btn fab-bottom" id="fab-bottom" onclick="scrollPageTo('bottom')" data-tip="Ir ao final" aria-label="Ir ao final da página" title="Ir ao final">
+    <span class="fab-icon">↓</span>
+  </button>
 </div>
 
 <!-- SOS MODAL -->
@@ -1157,47 +1355,11 @@ const EXERCISES = {
 };
 
 const LIBRARY_ARTICLES = [
-  {
-    icon: "😟", title: "O que é ansiedade?",
-    sub: "Entenda os sintomas e como lidar",
-    content: `<p>A <strong>ansiedade</strong> é uma resposta natural do organismo a situações de estresse ou ameaça. Em doses moderadas, ela nos ajuda a ficar alertas e preparados. Porém, quando se torna excessiva, pode prejudicar a qualidade de vida.</p>
-    <br><p><strong>Sintomas comuns:</strong></p>
-    <p>• Preocupação excessiva e constante<br>• Tensão muscular<br>• Dificuldade para dormir<br>• Coração acelerado<br>• Sensação de que algo ruim vai acontecer</p>
-    <br><p><strong>O que ajuda:</strong></p>
-    <p>Exercícios de respiração, atividade física regular, reduzir cafeína, manter uma rotina de sono e buscar apoio profissional quando necessário.</p>`
-  },
-  {
-    icon: "😔", title: "Entendendo a depressão",
-    sub: "Mais do que tristeza — é uma doença",
-    content: `<p>A <strong>depressão</strong> é muito mais do que se sentir triste. É uma condição médica que afeta como você pensa, sente e realiza atividades do dia a dia. Ela não é fraqueza nem falta de vontade.</p>
-    <br><p><strong>Sinais importantes:</strong></p>
-    <p>• Tristeza persistente por mais de 2 semanas<br>• Perda de interesse em atividades prazerosas<br>• Alterações no sono e apetite<br>• Dificuldade de concentração<br>• Pensamentos negativos frequentes</p>
-    <br><p><strong>Lembre-se:</strong> depressão tem tratamento e você merece receber ajuda. Procure um médico ou psicólogo.</p>`
-  },
-  {
-    icon: "😡", title: "Como lidar com a raiva",
-    sub: "Técnicas para gerenciar emoções intensas",
-    content: `<p>A <strong>raiva</strong> é uma emoção humana válida. O problema não é sentir raiva, mas como expressamos ela. Quando não gerenciada, pode prejudicar relacionamentos e nossa saúde.</p>
-    <br><p><strong>Estratégias eficazes:</strong></p>
-    <p>• Faça uma pausa antes de reagir<br>• Respire fundo várias vezes<br>• Conte de 10 a 1 mentalmente<br>• Expresse o que sente com "eu" em vez de "você"<br>• Escreva o que está sentindo</p>
-    <br><p>A raiva controlada pode se tornar energia para mudanças positivas.</p>`
-  },
-  {
-    icon: "🌸", title: "Autocuidado emocional",
-    sub: "Pequenas ações com grande impacto",
-    content: `<p>O <strong>autocuidado</strong> não é egoísmo — é necessidade. Cuidar de si mesmo permite que você cuide melhor dos outros também.</p>
-    <br><p><strong>Práticas simples:</strong></p>
-    <p>• Durma de 7 a 9 horas por noite<br>• Hidrate-se bem durante o dia<br>• Mova-se por pelo menos 20 minutos<br>• Estabeleça limites saudáveis<br>• Reserve tempo para o que te faz feliz<br>• Desconecte-se das redes sociais regularmente</p>
-    <br><p>Pequenas ações diárias constroem uma base emocional sólida.</p>`
-  },
-  {
-    icon: "🩺", title: "Quando procurar ajuda profissional?",
-    sub: "Reconheça os sinais e não espere mais",
-    content: `<p>Muitas pessoas hesitam em buscar ajuda profissional. Mas existem sinais claros de que é hora de consultar um psicólogo ou psiquiatra:</p>
-    <br><p>• Sintomas persistem por mais de 2 semanas<br>• Dificuldade para realizar tarefas do cotidiano<br>• Pensamentos de se machucar ou machucar outros<br>• Uso de álcool ou substâncias para aliviar a dor<br>• Isolamento social progressivo<br>• Sensação de que "não tem jeito"</p>
-    <br><p><strong>Buscar ajuda é o ato mais corajoso que você pode fazer. Você merece cuidado profissional.</strong></p>
-    <br><p>📞 CVV: 188 (gratuito, 24h)</p>`
-  },
+  { icon: "😟", title: "O que é ansiedade?", sub: "Entenda os sintomas e como lidar", content: `<p>A <strong>ansiedade</strong> é uma resposta natural do organismo a situações de estresse ou ameaça. Em doses moderadas, ela nos ajuda a ficar alertas e preparados. Porém, quando se torna excessiva, pode prejudicar a qualidade de vida.</p><br><p><strong>Sintomas comuns:</strong></p><p>• Preocupação excessiva e constante<br>• Tensão muscular<br>• Dificuldade para dormir<br>• Coração acelerado<br>• Sensação de que algo ruim vai acontecer</p><br><p><strong>O que ajuda:</strong></p><p>Exercícios de respiração, atividade física regular, reduzir cafeína, manter uma rotina de sono e buscar apoio profissional quando necessário.</p>` },
+  { icon: "😔", title: "Entendendo a depressão", sub: "Mais do que tristeza — é uma doença", content: `<p>A <strong>depressão</strong> é muito mais do que se sentir triste. É uma condição médica que afeta como você pensa, sente e realiza atividades do dia a dia. Ela não é fraqueza nem falta de vontade.</p><br><p><strong>Sinais importantes:</strong></p><p>• Tristeza persistente por mais de 2 semanas<br>• Perda de interesse em atividades prazerosas<br>• Alterações no sono e apetite<br>• Dificuldade de concentração<br>• Pensamentos negativos frequentes</p><br><p><strong>Lembre-se:</strong> depressão tem tratamento e você merece receber ajuda. Procure um médico ou psicólogo.</p>` },
+  { icon: "😡", title: "Como lidar com a raiva", sub: "Técnicas para gerenciar emoções intensas", content: `<p>A <strong>raiva</strong> é uma emoção humana válida. O problema não é sentir raiva, mas como expressamos ela. Quando não gerenciada, pode prejudicar relacionamentos e nossa saúde.</p><br><p><strong>Estratégias eficazes:</strong></p><p>• Faça uma pausa antes de reagir<br>• Respire fundo várias vezes<br>• Conte de 10 a 1 mentalmente<br>• Expresse o que sente com "eu" em vez de "você"<br>• Escreva o que está sentindo</p><br><p>A raiva controlada pode se tornar energia para mudanças positivas.</p>` },
+  { icon: "🌸", title: "Autocuidado emocional", sub: "Pequenas ações com grande impacto", content: `<p>O <strong>autocuidado</strong> não é egoísmo — é necessidade. Cuidar de si mesmo permite que você cuide melhor dos outros também.</p><br><p><strong>Práticas simples:</strong></p><p>• Durma de 7 a 9 horas por noite<br>• Hidrate-se bem durante o dia<br>• Mova-se por pelo menos 20 minutos<br>• Estabeleça limites saudáveis<br>• Reserve tempo para o que te faz feliz<br>• Desconecte-se das redes sociais regularmente</p><br><p>Pequenas ações diárias constroem uma base emocional sólida.</p>` },
+  { icon: "🩺", title: "Quando procurar ajuda profissional?", sub: "Reconheça os sinais e não espere mais", content: `<p>Muitas pessoas hesitam em buscar ajuda profissional. Mas existem sinais claros de que é hora de consultar um psicólogo ou psiquiatra:</p><br><p>• Sintomas persistem por mais de 2 semanas<br>• Dificuldade para realizar tarefas do cotidiano<br>• Pensamentos de se machucar ou machucar outros<br>• Uso de álcool ou substâncias para aliviar a dor<br>• Isolamento social progressivo<br>• Sensação de que "não tem jeito"</p><br><p><strong>Buscar ajuda é o ato mais corajoso que você pode fazer. Você merece cuidado profissional.</strong></p><br><p>📞 CVV: 188 (gratuito, 24h)</p>` },
 ];
 
 const ACHIEVEMENTS = [
@@ -1214,7 +1376,6 @@ let currentPage = 'home';
 let currentExTab = 'ansioso';
 let breathTimer = null;
 let breathActive = false;
-let exTimerInterval = null;
 let autosaveTimer = null;
 let diaryDraft = '';
 
@@ -1240,8 +1401,7 @@ function setData(key, val) {
 
   function createParticle() {
     return {
-      x: Math.random() * W,
-      y: Math.random() * H,
+      x: Math.random() * W, y: Math.random() * H,
       r: Math.random() * 2.5 + 0.5,
       dx: (Math.random() - 0.5) * 0.4,
       dy: (Math.random() - 0.5) * 0.4,
@@ -1250,10 +1410,7 @@ function setData(key, val) {
     };
   }
 
-  function init() {
-    resize();
-    particles = Array.from({ length: 60 }, createParticle);
-  }
+  function init() { resize(); particles = Array.from({ length: 60 }, createParticle); }
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
@@ -1277,43 +1434,337 @@ function setData(key, val) {
   init(); draw();
 })();
 
-// ====== SCROLL PROGRESS BARS ======
-function setupScrollProgress() {
-  const pages = ['home', 'diary', 'exercises', 'library', 'profile'];
-  pages.forEach(pageId => {
-    const page = document.getElementById('page-' + pageId);
-    const bar = document.getElementById('progress-' + pageId);
-    if (!page || !bar) return;
+// =====================================================
+// BLOQUEIO DE PULL-TO-REFRESH — Android WebView
+// Estratégia multicamada para máxima compatibilidade
+// =====================================================
+(function blockPullToRefresh() {
 
-    page.addEventListener('scroll', () => {
-      const scrollTop = page.scrollTop;
-      const scrollHeight = page.scrollHeight - page.clientHeight;
-      if (scrollHeight <= 0) { bar.style.width = '0%'; return; }
-      const pct = Math.min(100, (scrollTop / scrollHeight) * 100);
-      bar.style.width = pct + '%';
+  // ── Camada 1: Intercepta touchstart para rastrear posição ──
+  let startY = 0;
+  let startX = 0;
+  let isScrolling = false;   // scroll vertical detectado
+  let touchTarget = null;
+
+  document.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY;
+    startX = e.touches[0].clientX;
+    isScrolling = false;
+    touchTarget = e.target;
+  }, { passive: true });
+
+  // ── Camada 2: touchmove — bloqueia pull-to-refresh sem travar scroll ──
+  document.addEventListener('touchmove', function(e) {
+    if (!e.cancelable) return; // Safari: não tenta cancelar se já processado
+
+    const dy = e.touches[0].clientY - startY;
+    const dx = e.touches[0].clientX - startX;
+
+    // Detecta se é scroll horizontal (tabs, etc.) — deixa passar
+    if (Math.abs(dx) > Math.abs(dy) && !isScrolling) return;
+
+    // Detecta elemento scrollável ancestral
+    const scrollable = findScrollableParent(touchTarget);
+
+    if (scrollable) {
+      const atTop    = scrollable.scrollTop <= 0;
+      const atBottom = scrollable.scrollTop >= (scrollable.scrollHeight - scrollable.clientHeight - 1);
+
+      // No topo e puxando para BAIXO → pull-to-refresh → BLOQUEIA
+      if (atTop && dy > 0) {
+        e.preventDefault();
+        return;
+      }
+
+      // No fundo e puxando para CIMA (rubber band iOS) → deixa mas não propaga
+      // Na verdade, o overscroll-behavior:contain no CSS já cuida disso
+      // mas reforçamos aqui para WebViews legados
+      if (atBottom && dy < 0) {
+        // Não bloqueia — permite o scroll interno naturalmente
+        isScrolling = true;
+        return;
+      }
+
+      isScrolling = true;
+
+    } else {
+      // Sem elemento scrollável → qualquer drag é pull-to-refresh → BLOQUEIA
+      e.preventDefault();
+    }
+
+  }, { passive: false });
+
+  document.addEventListener('touchend', function() {
+    isScrolling = false;
+    touchTarget = null;
+  }, { passive: true });
+
+  // Encontra o ancestral scrollável mais próximo do elemento tocado
+  function findScrollableParent(el) {
+    if (!el || el === document.body) return null;
+
+    // Verifica se o próprio elemento é scrollável verticalmente
+    const style = window.getComputedStyle(el);
+    const overflow = style.overflowY;
+    const isScrollable = (overflow === 'auto' || overflow === 'scroll') && el.scrollHeight > el.clientHeight;
+
+    if (isScrollable) return el;
+    return findScrollableParent(el.parentElement);
+  }
+
+  // ── Camada 3: Bloqueia via meta tag programaticamente (para WebViews) ──
+  // Alguns WebViews Android ignoram CSS e precisam do JS
+  document.body.addEventListener('touchmove', function(e) {
+    // Só bloqueia se não há scrollable parent
+    const scrollable = findScrollableParent(e.target);
+    if (!scrollable && e.cancelable) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+})();
+
+// =====================================================
+// CUSTOM SCROLLBAR FLUTUANTE
+// Sincroniza com a .page ativa, draggable via touch e mouse
+// =====================================================
+(function setupCustomScrollbar() {
+  const scrollbarEl  = document.getElementById('custom-scrollbar');
+  const thumbEl      = document.getElementById('scrollbar-thumb');
+  const trackEl      = scrollbarEl.querySelector('.scrollbar-track');
+
+  let hideTimeout    = null;
+  let isDragging     = false;
+  let dragStartY     = 0;
+  let dragStartScroll = 0;
+  let currentPage    = null;  // referência à .page ativa
+  let rafId          = null;
+
+  // ── Recalcula posição e tamanho do thumb ──
+  function updateThumb(page) {
+    if (!page || !thumbEl || !trackEl) return;
+
+    const scrollTop    = page.scrollTop;
+    const scrollHeight = page.scrollHeight;
+    const clientHeight = page.clientHeight;
+
+    // Sem conteúdo scrollável → esconde a barra
+    if (scrollHeight <= clientHeight + 4) {
+      scrollbarEl.classList.remove('visible');
+      return;
+    }
+
+    scrollbarEl.classList.add('visible');
+
+    const trackHeight  = trackEl.offsetHeight;
+    // Thumb proporcional ao conteúdo visível
+    const thumbH       = Math.max(36, (clientHeight / scrollHeight) * trackHeight);
+    const maxThumbTop  = trackHeight - thumbH;
+    const thumbTop     = (scrollTop / (scrollHeight - clientHeight)) * maxThumbTop;
+
+    thumbEl.style.height = thumbH + 'px';
+    thumbEl.style.top    = thumbTop + 'px';
+  }
+
+  // ── Mostra e agenda ocultação automática ──
+  function showScrollbar(page) {
+    updateThumb(page);
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      if (!isDragging) scrollbarEl.classList.remove('visible');
+    }, 1400);
+  }
+
+  // ── Listener de scroll na .page ──
+  function onPageScroll(e) {
+    const page = e.currentTarget;
+    showScrollbar(page);
+
+    // Atualiza barra de progresso
+    const pageId = page.id.replace('page-', '');
+    const bar = document.getElementById('progress-' + pageId);
+    if (bar) {
+      const pct = page.scrollHeight - page.clientHeight > 0
+        ? (page.scrollTop / (page.scrollHeight - page.clientHeight)) * 100 : 0;
+      bar.style.width = Math.min(100, pct) + '%';
+    }
+
+    // Botão FAB ↑
+    updateFabTopVisibility(page.scrollTop);
+  }
+
+  // ── Posiciona a scrollbar verticalmente relativa ao .pages container ──
+  function positionScrollbar() {
+    const pagesEl = document.getElementById('pages-container');
+    if (!pagesEl || !scrollbarEl) return;
+    const rect = pagesEl.getBoundingClientRect();
+    scrollbarEl.style.top    = rect.top + 'px';
+    scrollbarEl.style.height = rect.height + 'px';
+    scrollbarEl.style.bottom = 'auto';
+  }
+
+  // ── Registra e desregistra listeners ao trocar de página ──
+  window._scrollbarSetPage = function(page) {
+    // Remove listeners de páginas anteriores
+    document.querySelectorAll('.page').forEach(p => {
+      p.removeEventListener('scroll', onPageScroll);
     });
+
+    currentPage = page;
+    if (!page) { scrollbarEl.classList.remove('visible'); return; }
+
+    page.addEventListener('scroll', onPageScroll, { passive: true });
+    positionScrollbar();
+    updateThumb(page);
+
+    // Mostra brevemente ao trocar de aba
+    showScrollbar(page);
+  };
+
+  // ── DRAG — Mouse ──
+  thumbEl.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    startDrag(e.clientY);
   });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    doDrag(e.clientY);
+  });
+
+  document.addEventListener('mouseup', function() {
+    endDrag();
+  });
+
+  // ── DRAG — Touch ──
+  thumbEl.addEventListener('touchstart', function(e) {
+    e.stopPropagation(); // não propaga para o bloqueador de pull-to-refresh
+    startDrag(e.touches[0].clientY);
+  }, { passive: true });
+
+  thumbEl.addEventListener('touchmove', function(e) {
+    e.stopPropagation();
+    if (!isDragging) return;
+    if (e.cancelable) e.preventDefault(); // previne scroll da página enquanto draga
+    doDrag(e.touches[0].clientY);
+  }, { passive: false });
+
+  thumbEl.addEventListener('touchend', function(e) {
+    e.stopPropagation();
+    endDrag();
+  }, { passive: true });
+
+  // ── CLIQUE NA TRACK (salta scroll) ──
+  trackEl.addEventListener('click', function(e) {
+    if (!currentPage) return;
+    const rect      = trackEl.getBoundingClientRect();
+    const clickY    = e.clientY - rect.top;
+    const ratio     = clickY / trackEl.offsetHeight;
+    const maxScroll = currentPage.scrollHeight - currentPage.clientHeight;
+    currentPage.scrollTo({ top: ratio * maxScroll, behavior: 'smooth' });
+  });
+
+  function startDrag(clientY) {
+    if (!currentPage) return;
+    isDragging     = true;
+    dragStartY     = clientY;
+    dragStartScroll = currentPage.scrollTop;
+    thumbEl.classList.add('dragging');
+    scrollbarEl.classList.add('visible');
+    clearTimeout(hideTimeout);
+  }
+
+  function doDrag(clientY) {
+    if (!isDragging || !currentPage) return;
+
+    const dy          = clientY - dragStartY;
+    const trackH      = trackEl.offsetHeight;
+    const thumbH      = parseFloat(thumbEl.style.height) || 36;
+    const maxThumbTop = trackH - thumbH;
+    const maxScroll   = currentPage.scrollHeight - currentPage.clientHeight;
+
+    if (maxThumbTop <= 0) return;
+
+    const scrollDelta = (dy / maxThumbTop) * maxScroll;
+    currentPage.scrollTop = Math.max(0, Math.min(maxScroll, dragStartScroll + scrollDelta));
+    updateThumb(currentPage);
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    thumbEl.classList.remove('dragging');
+    hideTimeout = setTimeout(() => scrollbarEl.classList.remove('visible'), 1400);
+  }
+
+  // Reposiciona em resize
+  window.addEventListener('resize', positionScrollbar);
+  positionScrollbar();
+
+})();
+
+// =====================================================
+// SCROLL PROGRESS BARS + FAB top visibility
+// (agora gerenciados dentro do custom scrollbar handler)
+// =====================================================
+
+// ====== FAB ======
+function getActivePage() {
+  return document.querySelector('.page.active');
+}
+
+function scrollPageTo(direction) {
+  const page = getActivePage();
+  if (!page) return;
+  if (direction === 'top') {
+    page.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    page.scrollTo({ top: page.scrollHeight, behavior: 'smooth' });
+  }
+}
+
+function updateFabTopVisibility(scrollTop) {
+  const fabTop = document.getElementById('fab-top');
+  if (!fabTop) return;
+  if (scrollTop > 80) {
+    fabTop.classList.add('visible');
+  } else {
+    fabTop.classList.remove('visible');
+  }
+}
+
+function updateFabVisibility() {
+  const fabGroup = document.getElementById('fab-group');
+  if (!fabGroup) return;
+  const anyModalOpen = document.querySelector('.modal-overlay.open');
+  fabGroup.style.opacity = anyModalOpen ? '0' : '';
+  fabGroup.style.pointerEvents = anyModalOpen ? 'none' : '';
 }
 
 // ====== NAVIGATION ======
 function navTo(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
+
+  const pageEl = document.getElementById('page-' + page);
+  pageEl.classList.add('active');
   document.querySelector(`[data-page="${page}"]`)?.classList.add('active');
   currentPage = page;
 
-  // Reset scroll and progress bar for the new page
-  const pageEl = document.getElementById('page-' + page);
-  if (pageEl) pageEl.scrollTop = 0;
+  // Reset scroll
+  pageEl.scrollTop = 0;
   const bar = document.getElementById('progress-' + page);
   if (bar) bar.style.width = '0%';
 
-  if (page === 'home') renderHome();
-  if (page === 'diary') renderDiary();
+  // Conecta scrollbar à nova página
+  if (window._scrollbarSetPage) window._scrollbarSetPage(pageEl);
+  updateFabTopVisibility(0);
+
+  if (page === 'home')      renderHome();
+  if (page === 'diary')     renderDiary();
   if (page === 'exercises') renderExercises();
-  if (page === 'library') renderLibrary();
-  if (page === 'profile') renderProfile();
+  if (page === 'library')   renderLibrary();
+  if (page === 'profile')   renderProfile();
 }
 
 // ====== TOAST ======
@@ -1324,10 +1775,15 @@ function showToast(msg, duration = 2500) {
 }
 
 // ====== MODALS ======
-function openModal(id) { document.getElementById(id).classList.add('open'); }
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  updateFabVisibility();
+}
+
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
   if (id === 'ex-modal') stopBreathing();
+  updateFabVisibility();
 }
 
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -1341,7 +1797,6 @@ function openSOS() { openModal('sos-modal'); }
 // ====== QUOTE ======
 function renderQuote() {
   const today = getTodayKey();
-  // Use date-based index so quote changes daily, not on every open
   const dateNum = parseInt(today.replace(/-/g, ''));
   const idx = dateNum % QUOTES.length;
   const q = QUOTES[idx];
@@ -1396,7 +1851,7 @@ function getTodayKey() {
   return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
 }
 
-// ====== WEEK CHART — ENHANCED WITH LINE CHART ======
+// ====== WEEK CHART ======
 function renderWeekChart() {
   const chart = document.getElementById('week-chart');
   chart.innerHTML = '';
@@ -1412,7 +1867,6 @@ function renderWeekChart() {
     const dayName = days[d.getDay()];
     const score = data ? data.score : 0;
     const isToday = key === today;
-
     const emColor = data ? (data.color || EMOTIONS.find(e => e.id === data.id)?.color || '#6f6bd8') : null;
     weekData.push({ score, data, dayName, key, d, isToday, emColor });
 
@@ -1423,7 +1877,6 @@ function renderWeekChart() {
     wrap.className = 'day-bar-wrap' + (isToday ? ' today-wrap' : '');
     wrap.onclick = () => openDayModal(key, data, dayName, d);
 
-    // Tooltip
     const tooltip = document.createElement('div');
     tooltip.className = 'chart-tooltip';
     tooltip.textContent = data ? `${data.emoji} ${data.label}` : dayName;
@@ -1435,7 +1888,6 @@ function renderWeekChart() {
       bar.style.boxShadow = `0 0 14px ${emColor}55`;
     }
 
-    // Animate bars in with stagger
     bar.style.height = '0%';
     bar.style.transition = 'none';
     setTimeout(() => {
@@ -1453,10 +1905,8 @@ function renderWeekChart() {
     chart.appendChild(wrap);
   }
 
-  // Render SVG line chart
   renderMoodLine(weekData);
 
-  // Render color legend for emotions present this week
   const legend = document.getElementById('chart-legend');
   if (legend) {
     const seen = new Set();
@@ -1479,19 +1929,15 @@ function renderWeekChart() {
 function renderMoodLine(weekData) {
   const svg = document.getElementById('mood-line-chart');
   if (!svg) return;
-
   const w = 300, h = 60;
   const points = weekData.map((d, i) => ({
     x: (i / (weekData.length - 1)) * (w - 20) + 10,
     y: d.score > 0 ? h - 6 - ((d.score / 9) * (h - 16)) : null,
-    color: d.emColor || '#b39dff',
-    data: d.data,
+    color: d.emColor || '#b39dff', data: d.data,
   }));
-
   const allValid = points.filter(p => p.y !== null);
   if (allValid.length < 2) { svg.innerHTML = ''; return; }
 
-  // Smooth curve using catmull-rom spline
   function catmullRom(pts) {
     if (pts.length < 2) return '';
     let d = `M ${pts[0].x},${pts[0].y}`;
@@ -1511,38 +1957,21 @@ function renderMoodLine(weekData) {
 
   const pathD = catmullRom(allValid);
   const areaD = pathD + ` L ${allValid[allValid.length-1].x},${h} L ${allValid[0].x},${h} Z`;
-
   const gid = 'mg' + Date.now();
   const lgid = 'lg' + Date.now();
-
-  // Build horizontal gradient using emotion colors across the week
-  const colorStops = allValid.map((p, i) => {
-    const pct = Math.round((p.x / w) * 100);
-    return `<stop offset="${pct}%" stop-color="${p.color}"/>`;
-  }).join('');
-
-  const areaStops = allValid.map((p, i) => {
-    const pct = Math.round((p.x / w) * 100);
-    return `<stop offset="${pct}%" stop-color="${p.color}44"/>`;
-  }).join('');
-
-  // Per-dot colored circles with glow
-  const dots = allValid.map(p => `
-    <circle cx="${p.x}" cy="${p.y}" r="4" fill="${p.color}" opacity="0.25"/>
-    <circle cx="${p.x}" cy="${p.y}" r="2.8" fill="${p.color}" opacity="1"/>
-  `).join('');
+  const colorStops = allValid.map(p => `<stop offset="${Math.round((p.x/w)*100)}%" stop-color="${p.color}"/>`).join('');
+  const areaStops = allValid.map(p => `<stop offset="${Math.round((p.x/w)*100)}%" stop-color="${p.color}44"/>`).join('');
+  const dots = allValid.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${p.color}" opacity="0.25"/><circle cx="${p.x}" cy="${p.y}" r="2.8" fill="${p.color}" opacity="1"/>`).join('');
 
   svg.innerHTML = `
     <defs>
       <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">${colorStops}</linearGradient>
       <linearGradient id="${lgid}" x1="0" y1="0" x2="1" y2="0">${areaStops}</linearGradient>
     </defs>
-    <path d="${areaD}" fill="url(#${lgid})" />
+    <path d="${areaD}" fill="url(#${lgid})"/>
     <path d="${pathD}" fill="none" stroke="url(#${gid})" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     ${dots}
   `;
-
-  // Animate the line drawing
   const linePath = svg.querySelectorAll('path')[1];
   if (linePath) {
     const len = linePath.getTotalLength?.() || 300;
@@ -1556,14 +1985,11 @@ function renderMoodLine(weekData) {
 function openDayModal(key, data, dayName, d) {
   const inner = document.getElementById('day-modal-inner');
   const dateStr = d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-  // Get diary entries for this day
   const diaryEntries = getData('diary', []).filter(e => {
     const eDate = new Date(e.ts);
     const eKey = `${eDate.getFullYear()}-${eDate.getMonth()+1}-${eDate.getDate()}`;
     return eKey === key;
   });
-
   inner.innerHTML = `
     <div class="modal-title">${dateStr}</div>
     ${data ? `
@@ -1574,11 +2000,7 @@ function openDayModal(key, data, dayName, d) {
     ${diaryEntries.length > 0 ? `
       <div style="margin-top:16px;">
         <div class="section-title" style="margin-bottom:10px">📖 Anotações do dia</div>
-        ${diaryEntries.map(e => `
-          <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;">
-            <p style="font-size:0.82rem;color:var(--text2);line-height:1.6">${e.text.replace(/\n/g, '<br>')}</p>
-          </div>
-        `).join('')}
+        ${diaryEntries.map(e => `<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;"><p style="font-size:0.82rem;color:var(--text2);line-height:1.6">${e.text.replace(/\n/g,'<br>')}</p></div>`).join('')}
       </div>
     ` : ''}
     <button class="modal-close" onclick="closeModal('day-modal')">Fechar</button>
@@ -1603,13 +2025,8 @@ function checkCrisis() {
   const allNeg = recent.length >= 3 && recent.every(e => negIds.includes(e.id));
   const banner = document.getElementById('crisis-banner');
   const sosBtn = document.getElementById('sos-btn');
-  if (allNeg) {
-    banner.classList.add('show');
-    sosBtn.classList.add('crisis');
-  } else {
-    banner.classList.remove('show');
-    sosBtn.classList.remove('crisis');
-  }
+  if (allNeg) { banner.classList.add('show'); sosBtn.classList.add('crisis'); }
+  else { banner.classList.remove('show'); sosBtn.classList.remove('crisis'); }
 }
 
 // ====== STREAK ======
@@ -1617,16 +2034,11 @@ function updateStreak() {
   let streak = getData('streak', { count: 0, lastDate: null });
   const today = getTodayKey();
   const yesterday = (() => { const d = new Date(); d.setDate(d.getDate()-1); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; })();
-
   if (streak.lastDate === today) return;
-  if (streak.lastDate === yesterday) {
-    streak.count++;
-  } else if (streak.lastDate !== today) {
-    streak.count = 1;
-  }
+  if (streak.lastDate === yesterday) { streak.count++; }
+  else if (streak.lastDate !== today) { streak.count = 1; }
   streak.lastDate = today;
   setData('streak', streak);
-
   if (streak.count >= 3) checkAchievement('streak_3');
   if (streak.count >= 7) checkAchievement('streak_7');
   updateStreakDisplay();
@@ -1648,14 +2060,13 @@ function checkAchievement(key) {
   }
 }
 
-// ====== DIARY — ENHANCED WITH AUTOSAVE ======
+// ====== DIARY ======
 function renderDiary() {
   const entries = getData('diary', []);
   const searchEl = document.getElementById('diary-search');
   const q = searchEl ? searchEl.value.trim() : '';
   renderDiaryList(entries, q);
 
-  // Restore draft
   const draft = getData('diary_draft', '');
   const input = document.getElementById('diary-input');
   if (input && draft) {
@@ -1665,15 +2076,12 @@ function renderDiary() {
     setAutosaveState('draft', '📝 Rascunho restaurado');
   }
 
-  // Setup autosave
   if (input) {
     input.oninput = () => {
       const text = input.value;
       diaryDraft = text;
       updateCharCounter(text.length);
       updateSaveBtn(text.length);
-
-      // Autosave draft
       clearTimeout(autosaveTimer);
       setAutosaveState('saving', 'Salvando rascunho...');
       autosaveTimer = setTimeout(() => {
@@ -1708,26 +2116,16 @@ function setAutosaveState(state, text) {
 function renderDiaryList(entries, query = '') {
   const list = document.getElementById('diary-list');
   const badge = document.getElementById('diary-count-badge');
-
   let filtered = entries;
-  if (query) {
-    filtered = entries.filter(e => e.text.toLowerCase().includes(query.toLowerCase()));
-  }
-
+  if (query) filtered = entries.filter(e => e.text.toLowerCase().includes(query.toLowerCase()));
   if (badge) badge.textContent = filtered.length > 0 ? `${filtered.length} registro${filtered.length !== 1 ? 's' : ''}` : '';
 
   if (!filtered.length) {
-    list.innerHTML = `
-      <div class="diary-empty">
-        <div class="diary-empty-icon">${query ? '🔍' : '📖'}</div>
-        <p>${query ? 'Nenhum registro encontrado.' : 'Nenhum registro ainda.<br>Escreva algo sobre como está se sentindo.'}</p>
-      </div>`;
+    list.innerHTML = `<div class="diary-empty"><div class="diary-empty-icon">${query ? '🔍' : '📖'}</div><p>${query ? 'Nenhum registro encontrado.' : 'Nenhum registro ainda.<br>Escreva algo sobre como está se sentindo.'}</p></div>`;
     return;
   }
 
-  // Reverse to show newest first
   const sorted = [...filtered].sort((a, b) => (b.ts || 0) - (a.ts || 0));
-
   list.innerHTML = sorted.map((e, i) => {
     const realIdx = entries.indexOf(e);
     const isLong = e.text.length > 200;
@@ -1766,34 +2164,20 @@ function saveDiary() {
   const input = document.getElementById('diary-input');
   const text = input.value.trim();
   if (!text) { showToast('Escreva algo antes de salvar 📝'); return; }
-
   const entries = getData('diary', []);
   const now = new Date();
-
-  // Get today's emotion
   const todayKey = getTodayKey();
   const todayEmotion = getData('day_' + todayKey, null);
-
-  const entry = {
-    text,
-    date: now.toLocaleString('pt-BR'),
-    ts: Date.now(),
-    emotion: todayEmotion ? { emoji: todayEmotion.emoji, label: todayEmotion.label } : null
-  };
-
+  const entry = { text, date: now.toLocaleString('pt-BR'), ts: Date.now(), emotion: todayEmotion ? { emoji: todayEmotion.emoji, label: todayEmotion.label } : null };
   entries.push(entry);
   setData('diary', entries);
-
-  // Clear draft
   setData('diary_draft', '');
   input.value = '';
   updateCharCounter(0);
   updateSaveBtn(0);
   setAutosaveState('', '');
-
   renderDiaryList(entries, '');
   showToast('✅ Registro salvo com sucesso!');
-
   if (entries.length >= 3) checkAchievement('diary_3');
 }
 
@@ -1811,11 +2195,9 @@ function deleteDiary(idx, event) {
 function renderExercises() {
   const tabs = document.getElementById('exercise-tabs');
   const list = document.getElementById('exercise-list');
-
   tabs.innerHTML = Object.entries(EXERCISES).map(([key, val]) =>
     `<button class="ex-tab ${currentExTab === key ? 'active' : ''}" onclick="setExTab('${key}')">${val.label}</button>`
   ).join('');
-
   const cat = EXERCISES[currentExTab];
   list.innerHTML = cat.items.map(ex => `
     <div class="exercise-card fade-up">
@@ -1832,23 +2214,21 @@ function renderExercises() {
 function setExTab(key) {
   currentExTab = key;
   renderExercises();
-  // Reset scroll and progress bar
   const page = document.getElementById('page-exercises');
   if (page) page.scrollTop = 0;
   const bar = document.getElementById('progress-exercises');
   if (bar) bar.style.width = '0%';
+  updateFabTopVisibility(0);
 }
 
 function openExercise(exId) {
   const allEx = Object.values(EXERCISES).flatMap(c => c.items);
   const ex = allEx.find(e => e.id === exId);
   if (!ex) return;
-
   const inner = document.getElementById('ex-modal-inner');
-
   if (ex.type === 'breathing') { inner.innerHTML = buildBreathingUI(ex); openModal('ex-modal'); return; }
   if (ex.type === 'countdown') { inner.innerHTML = buildCountdownUI(ex); openModal('ex-modal'); return; }
-  if (ex.type === 'guided') { inner.innerHTML = buildGuidedUI(ex); openModal('ex-modal'); return; }
+  if (ex.type === 'guided')   { inner.innerHTML = buildGuidedUI(ex);   openModal('ex-modal'); return; }
 }
 
 // ====== BREATHING ======
@@ -1878,7 +2258,6 @@ function startBreathing() {
   if (breathActive) return;
   breathActive = true;
   document.getElementById('breath-start-btn').disabled = true;
-
   let bc = getData('breath_count', 0) + 1;
   setData('breath_count', bc);
   if (bc >= 5) checkAchievement('breath_5');
@@ -1900,26 +2279,20 @@ function startBreathing() {
     const phaseEl = document.getElementById('breath-phase');
     const countEl = document.getElementById('breath-count');
     const innerEl = document.getElementById('breath-inner');
-
     if (!core) { breathActive = false; return; }
-
     phaseEl.textContent = phase.text;
     innerEl.textContent = phase.text;
     core.style.animation = `${phase.anim} ${phase.duration}ms ease-in-out both`;
-
     clearInterval(countInterval);
     countdown = phase.duration / 1000;
     countEl.textContent = countdown;
-
     countInterval = setInterval(() => {
       countdown--;
       if (countEl) countEl.textContent = countdown > 0 ? countdown : '';
     }, 1000);
-
     phaseIdx++;
     breathTimer = setTimeout(runPhase, phase.duration);
   }
-
   runPhase();
 }
 
@@ -1960,16 +2333,11 @@ function startCountdown(total) {
   let t = total;
   const el = document.getElementById('ex-timer');
   if (el) el.textContent = t;
-
   countdownInterval = setInterval(() => {
     t--;
     const el2 = document.getElementById('ex-timer');
     if (el2) el2.textContent = t;
-    if (t <= 0) {
-      clearInterval(countdownInterval);
-      if (el2) el2.textContent = '✅';
-      showToast('🎉 Exercício concluído!');
-    }
+    if (t <= 0) { clearInterval(countdownInterval); if (el2) el2.textContent = '✅'; showToast('🎉 Exercício concluído!'); }
   }, 1000);
 }
 
@@ -2030,23 +2398,11 @@ function renderProfile() {
   const history = getData('emotion_history', []);
   const diary = getData('diary', []);
   const streak = getData('streak', { count: 0 });
-  const breathCount = getData('breath_count', 0);
-
   document.getElementById('stat-grid').innerHTML = `
-    <div class="stat-card">
-      <div class="stat-value">${history.length}</div>
-      <div class="stat-label">Check-ins</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">${streak.count || 0}</div>
-      <div class="stat-label">Dias seguidos</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">${diary.length}</div>
-      <div class="stat-label">Diário</div>
-    </div>
+    <div class="stat-card"><div class="stat-value">${history.length}</div><div class="stat-label">Check-ins</div></div>
+    <div class="stat-card"><div class="stat-value">${streak.count || 0}</div><div class="stat-label">Dias seguidos</div></div>
+    <div class="stat-card"><div class="stat-value">${diary.length}</div><div class="stat-label">Diário</div></div>
   `;
-
   const unlocked = getData('achievements', []);
   document.getElementById('achievements-list').innerHTML = ACHIEVEMENTS.map(a => `
     <div class="achievement-row">
@@ -2072,16 +2428,14 @@ function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = 'sos-eficiencia-dados.json';
-  a.click(); URL.revokeObjectURL(url);
+  a.href = url; a.download = 'sos-eficiencia-dados.json'; a.click();
+  URL.revokeObjectURL(url);
   showToast('📤 Dados exportados!');
 }
 
 function resetData() {
   if (!confirm('Tem certeza? Todos os seus dados serão apagados permanentemente.')) return;
-  ['emotion_history','diary','streak','achievements','breath_count','diary_draft'].forEach(k => {
-    localStorage.removeItem('sos_' + k);
-  });
+  ['emotion_history','diary','streak','achievements','breath_count','diary_draft'].forEach(k => localStorage.removeItem('sos_' + k));
   Object.keys(localStorage).filter(k => k.startsWith('sos_day_')).forEach(k => localStorage.removeItem(k));
   showToast('🗑️ Dados resetados');
   renderProfile();
@@ -2089,9 +2443,13 @@ function resetData() {
 
 // ====== INIT ======
 function init() {
-  setupScrollProgress();
   updateStreak();
   renderHome();
+  updateFabTopVisibility(0);
+
+  // Conecta scrollbar à página inicial
+  const initialPage = document.getElementById('page-home');
+  if (window._scrollbarSetPage) window._scrollbarSetPage(initialPage);
 }
 
 init();
