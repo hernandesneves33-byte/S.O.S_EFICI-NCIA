@@ -2488,6 +2488,7 @@ function init() {
 
 init();
   const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyD9ghK-5bBjDlEpvWZZk2z7OCKxErAXIZ4",
   authDomain: "sos-eficiencia.firebaseapp.com",
   projectId: "sos-eficiencia",
@@ -2501,26 +2502,14 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 
-const db = firebase.firestore();
-
-const realtimeDB = firebase.database();
-  async function googleLogin(){
+async function googleLogin(){
 
  const provider =
  new firebase.auth.GoogleAuthProvider();
 
  try{
 
-   const result =
    await auth.signInWithPopup(provider);
-
-   const user = result.user;
-
-   alert("Bem-vindo " + user.displayName);
-
-   document.getElementById(
-   "login-screen"
-   ).style.display = "none";
 
  }catch(e){
 
@@ -2531,13 +2520,19 @@ const realtimeDB = firebase.database();
  }
 
 }
-  auth.onAuthStateChanged((user)=>{
+
+auth.onAuthStateChanged((user)=>{
+
+ const loginScreen =
+ document.getElementById("login-screen");
 
  if(user){
 
-   document.getElementById(
-   "login-screen"
-   ).style.display = "none";
+   loginScreen.style.display = "none";
+
+ }else{
+
+   loginScreen.style.display = "flex";
 
  }
 
