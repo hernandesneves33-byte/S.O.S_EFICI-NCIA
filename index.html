@@ -2690,37 +2690,33 @@ const auth = firebase.auth();
 
 const db = firebase.firestore();
 
-async function googleLogin(){
+async function googleLogin() {
 
- const provider =
- new firebase.auth.GoogleAuthProvider();
+  try {
 
- try{
+    const provider =
+      new firebase.auth.GoogleAuthProvider();
 
-   const result =
-   await auth.signInWithPopup(provider);
+    const result =
+      await auth.signInWithPopup(provider);
 
-   const user = result.user;
+    const user = result.user;
 
-   await db.collection("users")
-   .doc(user.uid)
-   .set({
+    console.log(user);
 
-     nome: user.displayName,
-     email: user.email,
-     foto: user.photoURL,
-     uid: user.uid,
-     ultimoLogin: Date.now()
+    alert("Login realizado!");
 
-   });
+    document.getElementById(
+      "login-screen"
+    ).style.display = "none";
 
- }catch(e){
+  } catch (e) {
 
-   console.error(e);
+    console.error(e);
 
-   alert("Erro login");
+    alert(e.message);
 
- }
+  }
 
 }
 
